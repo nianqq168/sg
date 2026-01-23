@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026新加坡圓夢之旅 | Singapore Trip</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Custom Styles for Animations -->
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 800px; }
+        }
+        .animate-slideDown {
+            animation: slideDown 0.3s ease-out forwards;
+        }
+        
+        /* Artistic Banner Styles */
+        .banner-mask-left {
+            -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
+            mask-image: linear-gradient(to right, black 50%, transparent 100%);
+        }
+        .banner-mask-right {
+            -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+            mask-image: linear-gradient(to left, black 60%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons Components (SVG) ---
+        // Fixed: Use <g> (SVG Group) instead of Fragments <> to ensure browser compatibility
+        const Icon = ({ name, size = 24, className = "" }) => {
+            const icons = {
+                Clock: <g><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></g>,
+                Sun: <g><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></g>,
+                Camera: <g><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></g>,
+                Info: <g><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></g>,
+                ArrowRight: <g><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></g>,
+                Train: <g><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h0"/><path d="M16 15h0"/></g>,
+                Bus: <g><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></g>,
+                X: <g><path d="M18 6 6 18"/><path d="m6 6 12 12"/></g>,
+                Map: <g><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></g>,
+                ExternalLink: <g><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></g>,
+                Navigation: <g><polygon points="3 11 22 2 13 21 11 13 3 11"/></g>,
+                Footprints: <g><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8.79a2.79 2.79 0 0 1 5.58 0c.03 1.7-1 2.71-1 4.83 0 1.17 0 2.38 0 2.38"/><path d="M14 16v-2.38c0-2.12-1.03-3.12-1-4.83a2.79 2.79 0 0 1 5.58 0c.03 1.7-1 2.71-1 4.83 0 1.17 0 2.38 0 2.38"/><path d="M7 21h0"/><path d="M17 21h0"/></g>,
+                Music: <g><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></g>,
+                Utensils: <g><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></g>
+            };
+
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {icons[name] || <circle cx="12" cy="12" r="10"/>}
+                </svg>
+            );
+        };
+
+        // --- Main App Component ---
+        const ItineraryApp = () => {
+            const [activeDay, setActiveDay] = useState(0);
+            const [showTips, setShowTips] = useState(false);
+            const [selectedAttraction, setSelectedAttraction] = useState(null);
+
+            // Helper to handle image errors
+            const handleImageError = (e) => {
+                e.target.src = "https://images.unsplash.com/photo-1565967511849-76a60a516170?q=80&w=800&auto=format&fit=crop"; 
+                e.target.alt = "Image not available";
+            };
+
+            const tripData = [
+                {
+                date: "2/7 (六)",
+                title: "Day 1: 抵達 & 河畔人文散策",
+                highlight: "開啟旅程，入住聖淘沙 & 克拉碼頭",
+                mapLink: "https://www.google.com/maps/dir/Changi+Airport+Singapore/Village+Hotel+Sentosa/Old+Hill+Street+Police+Station/National+Gallery+Singapore/Merlion+Park/Lau+Pa+Sat/Village+Hotel+Sentosa",
+                // Food Guide Section for Day 1
+                foodGuides: [
+                    {
+                        name: "松發肉骨茶 (Song Fa Bak Kut Teh)",
+                        tag: "米其林必比登推薦",
+                        price: "均價 SGD 10-15",
+                        image: "https://images.unsplash.com/photo-1627464095729-3733075b9c03?q=80&w=800&auto=format&fit=crop", 
+                        desc: "新加坡三大肉骨茶之一，潮州式白湯充滿濃郁的白胡椒辣勁，排骨燉煮到軟嫩脫骨。推薦搭配油條吸滿湯汁食用，湯喝完可免費續加。",
+                        location: "Song Fa Bak Kut Teh New Bridge Road"
+                    },
+                    {
+                        name: "老巴剎 Best Satay 7 & 8",
+                        tag: "燒烤一條街人氣王",
+                        price: "套餐約 SGD 28起",
+                        image: "https://images.unsplash.com/photo-1568045898748-18e42f9b1d1f?q=80&w=800&auto=format&fit=crop",
+                        desc: "位於戶外沙爹街(Boon Tat St) 中段人潮最多的攤位。炭火現烤的雞/牛/羊肉串帶有焦香，沾上特製厚花生醬，搭配洋蔥與黃瓜解膩。建議點綜合套餐(Set A/B)一次滿足。",
+                        location: "Lau Pa Sat Satay Street"
+                    }
+                ],
+                schedule: [
+                    {
+                    time: "08:20 - 13:05",
+                    activity: "桃園 T1 ✈️ 新加坡樟宜 T3",
+                    desc: "抵達後請先前往 T3 到達大廳領取預購的網卡，再確認 Grab App 可用。",
+                    type: "flight",
+                    subItems: [
+                        { 
+                        name: "【重要】領取 5G 網卡", 
+                        note: "Travelex 櫃檯 (24H)",
+                        image: "https://images.unsplash.com/photo-1565528859374-9540c4973307?q=80&w=800&auto=format&fit=crop", // Changi Airport generic
+                        details: "請前往第三航廈到達大廳（1 樓）。走出行李提取區後，尋找「Travelex 貨幣兌換處」兌換購買好的 Singtel 5G 網卡。\n\n櫃檯位置參考：\n1. 櫃位 #01-K9：位於行李帶 43-44 對面\n2. 櫃位 #01-K15：位於行李帶 46-47 對面\n\n購買網址：https://hk.trip.com/things-to-do/detail/45657136",
+                        location: "Changi Airport Terminal 3 Arrival Hall"
+                        }
+                    ]
+                    },
+                    {
+                    time: "14:00 - 14:30",
+                    activity: "悅樂聖淘沙酒店 Check-in",
+                    desc: "搭乘專車抵達。飯店主打家庭友善，泳池區非常棒。",
+                    type: "hotel"
+                    },
+                    {
+                    time: "14:30 - 15:30",
+                    activity: "前往市政區 (交通移動)",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "輕軌 + 地鐵 (MRT)",
+                        steps: [
+                        "搭乘 Sentosa Express 至 VivoCity",
+                        "轉乘 MRT NE線 (紫線) 至 Clarke Quay (NE5) 站",
+                        "從 C 出口出站，即達行程起點：克拉碼頭購物中心"
+                        ]
+                    }
+                    },
+                    {
+                    time: "15:30 - 19:30",
+                    activity: "河畔人文與建築散策",
+                    desc: "沿著新加坡河畔步行，這是一條集結歷史古蹟、現代藝術與城市地標的黃金路線。",
+                    subItems: [
+                        { 
+                        name: "1. 克拉碼頭 (Clarke Quay)", 
+                        note: "起點：歷史河岸",
+                        image: "https://images.unsplash.com/photo-1574227492706-f6cac0635786?q=80&w=800&auto=format&fit=crop",
+                        details: "克拉碼頭（Clarke Quay）不僅是新加坡夜生活的代名詞，更是見證新加坡河貿易歷史的重要地標。十九世紀時，這裡是駁船（Bumboats）卸貨的繁忙碼頭，來自世界各地的香料、絲綢與咖啡豆在此集散。如今，昔日的倉庫（Godowns）已被精心修復，保留了原本的磚瓦結構，並漆上了繽紛的色彩，變身為時尚的餐廳、酒吧與俱樂部。漫步於此，您可以欣賞到河面倒映著五光十色的燈火，感受古老建築與現代娛樂的完美融合。若是傍晚時分抵達，更能體驗從寧靜河畔轉變為熱鬧不夜城的迷人過程，是攝影愛好者捕捉城市活力的絕佳場景。",
+                        location: "Clarke Quay"
+                        },
+                        { 
+                        name: "2. 舊禧街警察局", 
+                        note: "彩虹窗戶建築",
+                        image: "https://images.unsplash.com/photo-1549488344-c35596fb051d?q=80&w=800&auto=format&fit=crop",
+                        details: "這座建於1934年的新古典主義建築，前身是新加坡警察局及收容所，被視為當時最現代化的公共建築之一。如今，它已華麗轉身為通訊及新聞部（MCI）的辦公大樓。最引人注目的，莫過於其立面上多達 927 扇的窗戶，被漆上了如彩虹光譜般的漸層色彩——從赤紅到亮紫，象徵著活力與多元。這棟建築不僅是視覺藝術的傑作，更是新加坡致力於古蹟活化的典範。建議您走到對街的行人天橋上，能以最佳角度拍下整座建築的壯麗全景，是設計師與建築迷絕對不能錯過的打卡點。",
+                        location: "Old Hill Street Police Station"
+                        },
+                        { 
+                        name: "3. 國家美術館", 
+                        note: "前最高法院改建",
+                        image: "https://images.unsplash.com/photo-1558500645-568eb4c02741?q=80&w=800&auto=format&fit=crop",
+                        details: "新加坡國家美術館（National Gallery Singapore）是全球最大的東南亞現代藝術公共收藏機構之一。這座美術館由兩座國家古蹟——前最高法院（Supreme Court）和政府大廈（City Hall）合併而成。建築師巧妙地運用金屬與玻璃的現代語彙，在兩座莊嚴的殖民建築之間架起了一道道空橋與天幕，讓自然光線灑落於歷史的廊道間。走進這裡，您不僅是在欣賞畫作，更是在閱讀建築的歷史。推薦您前往頂樓的露台花園，那裡可以俯瞰整個政府大廈大草場（Padang）與濱海灣金沙的壯闊天際線，是新舊新加坡對話的最佳視角。",
+                        location: "National Gallery Singapore"
+                        },
+                        { 
+                        name: "4. 戰爭紀念公園", 
+                        note: "歷史紀念碑",
+                        image: "https://images.unsplash.com/photo-1629858713176-788814736f88?q=80&w=800&auto=format&fit=crop",
+                        details: "在繁華的市中心，矗立著一座潔白而莊嚴的紀念碑，當地人俗稱「筷子」。這是蒙難人民紀念碑（Civilian War Memorial），建於1967年，旨在悼念二戰期間日本佔領時期不幸喪生的新加坡平民。四根高聳入雲的柱子緊緊相依，分別象徵著華人、馬來人、印度人與歐亞裔四大種族，在苦難中不分彼此、團結一致的精神。這裡環境清幽肅穆，是喧囂城市中讓人沈澱心靈、反思和平珍貴的歷史角落。",
+                        location: "Civilian War Memorial"
+                        },
+                        { 
+                        name: "5. 濱海藝術中心", 
+                        note: "大榴槤建築",
+                        image: "https://images.unsplash.com/photo-1506351421178-63b52a2d2562?q=80&w=800&auto=format&fit=crop",
+                        details: "濱海藝術中心（Esplanade - Theatres on the Bay）是新加坡首屈一指的表演藝術中心。其大膽前衛的建築設計，覆蓋著數千片鋁製遮陽板，這些遮陽板的角度經過精密計算，能最大限度地利用自然光並阻擋熱氣。由於其獨特的刺狀外觀酷似東南亞的水果之王，因此被當地人親切地稱為「大榴槤」。這座建築不僅是視覺上的地標，其內部的音樂廳與劇院在聲學設計上更是世界級水準。即使不進場看表演，在建築外圍的濱海步道散步，欣賞其幾何構造與光影變化，也是一種享受。",
+                        location: "Esplanade - Theatres on the Bay"
+                        },
+                        { 
+                        name: "6. 魚尾獅公園", 
+                        note: "經典地標",
+                        image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=800&auto=format&fit=crop",
+                        details: "來到新加坡，怎能不見魚尾獅（Merlion）？這座半魚半獅的神話生物是新加坡的國家象徵。「獅頭」代表新加坡舊名「Singapura」（獅子城），「魚尾」則象徵著這座小島過去作為漁村（Temasek）的謙卑起源。魚尾獅公園位於濱海灣畔，這座高8.6公尺的雕像日夜噴水，將源源不絕的財富與活力注入海灣。這裡也是拍攝濱海灣金沙酒店（Marina Bay Sands）的最佳位置，建議您可以利用錯位攝影，拍出「接住財富之水」的有趣照片。",
+                        location: "Merlion Park"
+                        },
+                        { 
+                        name: "7. 老巴剎 (Lau Pa Sat)", 
+                        note: "終點：維多利亞建築與沙爹街",
+                        image: "https://images.unsplash.com/photo-1568045898748-18e42f9b1d1f?q=80&w=800&auto=format&fit=crop",
+                        details: "老巴剎（Lau Pa Sat，福建話「老市場」之意）是東南亞現存最古老的維多利亞式鑄鐵建築。建於19世紀，其精緻的蕾絲狀鑄鐵花紋、挑高的八角形結構與高聳的鐘樓，在周圍摩天大樓的包圍下顯得格外優雅且獨特。這裡不僅是視覺的饗宴，更是味蕾的天堂。每當夜幕低垂（約晚上7點後），旁邊的文達街（Boon Tat Street）會封路，搖身一變成為煙火氣十足的「沙爹一條街」。空氣中瀰漫著炭烤肉串的香氣，人們坐在戶外的矮桌椅上大快朵頤，這種在金融中心大樓下路邊野餐的反差感，是新加坡絕無僅有的體驗。",
+                        location: "Lau Pa Sat"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "20:00",
+                    activity: "返回悅樂聖淘沙酒店",
+                    desc: "結束充實的一天，準備回飯店休息。",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "地鐵 + 輕軌",
+                        steps: [
+                        "從老巴剎步行至 Telok Ayer (DT18) 或 Raffles Place (NS26/EW14)",
+                        "搭乘地鐵前往 HarbourFront (NE1/CC29) 站",
+                        "前往 VivoCity 3樓轉乘 Sentosa Express",
+                        "在 Imbiah Station 下車，步行回飯店"
+                        ]
+                    }
+                    }
+                ]
+                },
+                {
+                date: "2/8 (日)",
+                title: "Day 2: 楊秀桃音樂營第一天 & 南部群島跳島遊",
+                highlight: "Leander 課程開始，全家出海跳島探險",
+                mapLink: "https://www.google.com/maps/dir/Village+Hotel+Sentosa/Yong+Siew+Toh+Conservatory+of+Music/Resorts+World+Sentosa/Village+Hotel+Sentosa",
+                // Food Guide for Day 2 (Picnic + Malaysian Food Street)
+                foodGuides: [
+                    {
+                        name: "跳島野餐攻略 (Island Picnic)",
+                        tag: "午餐/補給",
+                        price: "超市/外帶",
+                        image: "https://images.unsplash.com/photo-1595150821557-07409c256a5c?q=80&w=800&auto=format&fit=crop",
+                        desc: "島上無商店，請自備：\n1. YST Fine Food 午餐。\n2. VivoCity 超市買的大瓶水與零食。\n3. 防蚊液與濕紙巾。",
+                        location: "VivoCity NTUC FairPrice"
+                    },
+                    {
+                        name: "祤記瓦煲雞飯 (Heun Kee)",
+                        tag: "吉隆坡名店",
+                        price: "均價 SGD 12",
+                        image: "https://images.unsplash.com/photo-1599180735399-974a625a329d?q=80&w=800&auto=format&fit=crop", // Claypot rice generic
+                        desc: "使用傳統炭火煲煮，米飯充滿焦香鍋巴，雞肉滑嫩入味，淋上鹹香的黑醬油與鹹魚，是美食街的必排美食。",
+                        location: "Malaysian Food Street RWS"
+                    },
+                    {
+                        name: "新巴力咖哩雞 (Sempalit Curry)",
+                        tag: "彭亨州美味",
+                        price: "均價 SGD 8",
+                        image: "https://images.unsplash.com/photo-1629196914375-f7e48f477b6d?q=80&w=800&auto=format&fit=crop", // Curry chicken
+                        desc: "來自彭亨州的獨門秘方，咖哩湯汁濃郁順滑，帶有椰奶香氣，雞肉燉煮得非常軟爛，搭配白飯或麵包都一絕。",
+                        location: "Malaysian Food Street RWS"
+                    },
+                    {
+                        name: "府留鮮福建麵 (Hokkien Mee)",
+                        tag: "鍋氣十足",
+                        price: "均價 SGD 8",
+                        image: "https://images.unsplash.com/photo-1647248593450-4828f3227464?q=80&w=800&auto=format&fit=crop", // Dark Hokkien Mee
+                        desc: "經典的馬來西亞福建麵（黑麵），使用濃黑醬油與豬油渣大火快炒，麵條吸滿湯汁，鍋氣（Wok Hei）十足，口感Q彈。",
+                        location: "Malaysian Food Street RWS"
+                    }
+                ],
+                schedule: [
+                    {
+                    time: "09:00 - 09:30",
+                    activity: "前往楊秀桃音樂學院 (YST)",
+                    desc: "全家搭乘 Grab (6-seater) 前往 NUS，記得帶大提琴。",
+                    type: "transport"
+                    },
+                    {
+                    time: "09:30 - 12:00",
+                    activity: "上午行程：分組活動",
+                    desc: "Leander 參加課程，家人參觀校園。",
+                    subItems: [
+                        {
+                            name: "【Leander】YST 音樂課程",
+                            note: "09:30-12:00",
+                            details: "09:30 報到與暖身。\n10:00-10:30 Yu Jing 老師大提琴課程。\n10:30-12:00 自主練習時間。",
+                            image: "https://images.unsplash.com/photo-1514117445516-2ec90fa4b84b?q=80&w=800&auto=format&fit=crop"
+                        },
+                        {
+                            name: "【家人】NUS 校園巡禮",
+                            note: "YST & UTown",
+                            details: "09:30-10:00 參觀楊秀桃音樂學院校區。\n10:00-11:00 前往隔壁 UTown (大學城) 逛逛並在星巴克休息。\n11:00-11:40 在 Fine Food 食閣購買午餐。\n11:40-12:00 回到 YST 接哥哥。",
+                            image: "https://images.unsplash.com/photo-1558440523-9366e6b4d32e?q=80&w=800&auto=format&fit=crop"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "12:00 - 13:00",
+                    activity: "返回飯店 & 前往碼頭",
+                    desc: "Grab 回悅樂聖淘沙放琴，準備好野餐袋，前往 RWS 碼頭報到。",
+                    type: "transport"
+                    },
+                    {
+                    time: "13:00 - 18:00",
+                    activity: "信天翁快艇跳島之旅 (Albatross Speedboat)",
+                    desc: "探索新加坡最美的「南部群島」。行程經過精心安排，不走回頭路。",
+                    subItems: [
+                        { 
+                        name: "13:15 | 快艇出發", 
+                        note: "龍牙門 & 海景",
+                        image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=800&auto=format&fit=crop",
+                        details: "準時登船！享受海風與速度感，途經壯觀的龍牙門與新加坡港口天際線，直奔第一站。",
+                        location: "Resorts World Sentosa"
+                        },
+                        { 
+                        name: "13:30 - 15:30 | 雙島連遊", 
+                        note: "拉扎魯斯島 (進) -> 聖約翰島 (出)",
+                        image: "https://images.unsplash.com/photo-1596706913689-1064c5148674?q=80&w=800&auto=format&fit=crop",
+                        details: "【拉扎魯斯島】：先在 C 型海灘野餐、玩水、拍網美照。\n【步行移動】：沿著堤道步行約 15 分鐘前往聖約翰島，沿途風景優美。\n【聖約翰島】：探索紅樹林生態，尋找島上的貓咪，最後從聖約翰碼頭搭船。",
+                        location: "Lazarus Island Beach"
+                        },
+                        { 
+                        name: "15:45 - 16:45 | 龜嶼 (Kusu Island)", 
+                        note: "海龜 & 祈福",
+                        image: "https://images.unsplash.com/photo-1621536780338-7f934278482f?q=80&w=800&auto=format&fit=crop",
+                        details: "搭船抵達龜嶼。參觀大伯公廟，最重要的是帶小朋友去看「海龜保護區」，觀察可愛的海龜。",
+                        location: "Kusu Island"
+                        },
+                        { 
+                        name: "17:00 - 17:30 | 姐妹島 (Sisters' Islands)", 
+                        note: "海洋公園",
+                        image: "https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?q=80&w=800&auto=format&fit=crop", // Using generic island/nature
+                        details: "新加坡首座海洋公園。若潮汐與開放狀況允許則登島觀察珊瑚礁生態，或進行環島巡航，欣賞獨特的島嶼地貌。",
+                        location: "Sisters' Islands Marine Park"
+                        },
+                        { 
+                        name: "17:30 - 18:00 | 夕陽回程", 
+                        note: "返回聖淘沙",
+                        image: "https://images.unsplash.com/photo-1510137600163-2729bc699b0b?q=80&w=800&auto=format&fit=crop", // Sunset
+                        details: "在夕陽餘暉中搭乘快艇返回聖淘沙名勝世界碼頭，結束充實的跳島之旅。",
+                        location: "Resorts World Sentosa"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "18:00 - 20:00",
+                    activity: "晚餐：馬來西亞美食街",
+                    desc: "下船後直接前往聖淘沙名勝世界（RWS）的馬來西亞美食街。這裡重現了馬來西亞古鎮的懷舊風情，推薦品嚐：祤記瓦煲雞飯、新巴力咖哩雞與府留鮮福建麵。",
+                    type: "highlight"
+                    }
+                ]
+                },
+                {
+                date: "2/9 (一)",
+                title: "Day 3: 楊秀桃音樂營第二天 & 時尚與傳統交織的美學",
+                highlight: "哥哥沈浸營 Day 2，時尚與傳統的對話",
+                mapLink: "https://www.google.com/maps/dir/Village+Hotel+Sentosa/Yong+Siew+Toh+Conservatory+of+Music/library@orchard/Design+Orchard/Chinatown+MRT+Station/Mixue+People's+Park/Buddha+Tooth+Relic+Temple/Maxwell+Food+Centre/Yong+Siew+Toh+Conservatory+of+Music/Village+Hotel+Sentosa",
+                // Food Guide for Day 3
+                foodGuides: [
+                    {
+                        name: "天天海南雞飯 (Tian Tian)",
+                        tag: "米其林必比登推薦",
+                        price: "均價 SGD 6-10",
+                        image: "https://images.unsplash.com/photo-1606341257121-6d75c602325c?q=80&w=800&auto=format&fit=crop",
+                        desc: "位於麥士威熟食中心，雞肉滑嫩多汁，搭配特製辣椒醬與雞油飯，是新加坡國寶級美食。",
+                        location: "Tian Tian Hainanese Chicken Rice"
+                    },
+                    {
+                        name: "老伴豆花 (Old Ban Bean Curd)",
+                        tag: "入口即化",
+                        price: "均價 SGD 2-3",
+                        image: "https://images.unsplash.com/photo-1598515214211-3f88c7247e52?q=80&w=800&auto=format&fit=crop", 
+                        desc: "與傳統豆花不同，口感更像布丁，冰涼清爽，帶有濃郁的豆奶香氣。",
+                        location: "Lao Ban Soya Beancurd Maxwell"
+                    },
+                    {
+                        name: "蜜雪冰城 (Mixue)",
+                        tag: "高CP值冰品",
+                        price: "均價 SGD 1-2",
+                        image: "https://images.unsplash.com/photo-1560008581-09826d1de69e?q=80&w=800&auto=format&fit=crop",
+                        desc: "位於珍珠坊一樓，招牌摩天脆脆冰淇淋是炎熱天氣下的消暑神器。",
+                        location: "Mixue People's Park Complex"
+                    }
+                ],
+                schedule: [
+                    {
+                    time: "09:00 - 12:00",
+                    activity: "家人行程 Part 1：烏節路美學",
+                    desc: "探索新加坡的設計力。推薦從 YST 附近搭巴士直達。",
+                    type: "highlight",
+                    subItems: [
+                        { 
+                        name: "Library@Orchard", 
+                        note: "Orchard Gateway 3F/4F",
+                        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=800&auto=format&fit=crop",
+                        details: "這被譽為新加坡最美的圖書館，隱身於熱鬧的 Orchard Gateway 商場中。館內設計以「設計是為所有人」為理念，最吸睛的是那標誌性的波浪形書架，線條流暢優雅，宛如流動的知識海洋。館藏書籍以設計、藝術、生活風格為主，非常契合您的專業背景。圖書館內設有許多舒適的閱讀角落，甚至有適合獨處的「蠶繭」座椅。這裡不僅是閱讀的場所，更是室內設計的傑作，每一個角落都充滿了美感與巧思。",
+                        location: "library@orchard"
+                        },
+                        { 
+                        name: "Design Orchard", 
+                        note: "在地設計品牌",
+                        image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800&auto=format&fit=crop",
+                        details: "位於烏節路與凱恩希爾路交界，這棟建築本身就是一個現代簡約風格的綠建築案例。其最大的特色是戶外的大型階梯廣場，連接著地面與頂樓的露天花園，為繁忙的購物區提供了一個休憩的綠色空間。建築內部是新加坡在地設計師品牌的孵化器與展示空間，集合了服裝、飾品、家飾等多個本土品牌。在這裡，您可以買到最具新加坡原創精神的設計商品，是尋找獨特紀念品與觀察當地設計趨勢的最佳窗口。",
+                        location: "Design Orchard"
+                        },
+                        { 
+                        name: "Emerald Hill", 
+                        note: "峇峇娘惹建築群",
+                        image: "https://images.unsplash.com/photo-1629858713176-788814736f88?q=80&w=800&auto=format&fit=crop",
+                        details: "就在 Design Orchard 對面，轉個彎進入 Emerald Hill Road，彷彿瞬間穿越了時空。這裡曾是肉荳蔻種植園，後來成為富有的土生華人（Peranakan，即峇峇娘惹）聚居地。街道兩旁保留了完整的傳統排屋，這些建築融合了中式佈局與巴洛克風格的裝飾——精緻的彩色磁磚、繁複的木雕門窗（Pintu Pagar）以及粉彩色的外牆。這裡鬧中取靜，是拍攝南洋殖民風格建築的絕佳地點，每一棟房子都像是在訴說著舊時代的故事。",
+                        location: "Emerald Hill Road"
+                        }
+                    ]
+                    },
+                    {
+                    time: "12:00 - 14:30",
+                    activity: "家人行程 Part 2：牛車水美食",
+                    desc: "從烏節路搭乘地鐵 (Somerset -> Dhoby Ghaut -> Chinatown) 快速抵達，前往麥士威熟食中心與珍珠坊。",
+                    subItems: [
+                        { 
+                        name: "佛牙寺龍華院", 
+                        note: "珍珠坊 / 佛牙寺",
+                        image: "https://images.unsplash.com/photo-1598893776052-774183d0b49e?q=80&w=800&auto=format&fit=crop",
+                        details: "這座宏偉的寺廟雖建於2007年，卻採用了唐代的建築風格，展現了盛唐時期的建築氣勢。寺廟樓高五層，內部金碧輝煌，供奉著據說是佛陀的牙齒舍利。對於視覺藝術專業者來說，其繁複的色彩運用、精緻的木雕、藻井設計以及千佛壁，都是極佳的觀察對象。建議可以登上頂樓的空中蘭花園，那裡有一個巨大的轉經輪，環境清幽雅致，是喧囂牛車水中的一片淨土。",
+                        location: "Buddha Tooth Relic Temple"
+                        }
+                    ]
+                    },
+                    {
+                    time: "15:00 - 16:00",
+                    activity: "接哥哥 & 帶琴回飯店",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "專車/Grab (樂器移動)",
+                        steps: [
+                        "回到 YST 接哥哥與大提琴",
+                        "呼叫 Grab 6-seater / Grab Premium",
+                        "直達悅樂聖淘沙酒店放琴",
+                        "稍微梳洗休息，再步行前往聖淘沙海灘區"
+                        ]
+                    }
+                    },
+                    {
+                    time: "16:00 - 20:00",
+                    activity: "聖淘沙放鬆時光",
+                    desc: "傍晚享受海島氛圍。",
+                    subItems: [
+                        { 
+                        name: "巴拉灣海灘 (Palawan Beach)", 
+                        note: "亞洲大陸最南端",
+                        image: "https://images.unsplash.com/photo-1596706913689-1064c5148674?q=80&w=800&auto=format&fit=crop",
+                        details: "這裡有一座標誌性的吊橋，連接著巴拉灣島，即著名的「亞洲大陸最南端」。傍晚時分走在吊橋上，海風徐徐，景色優美，是全家拍照留念的絕佳地點。這裡的海浪較小，也適合孩子戲水。",
+                        location: "Palawan Beach"
+                        }
+                    ],
+                    type: "highlight"
+                    }
+                ]
+                },
+                {
+                date: "2/10 (二)",
+                title: "Day 4: 楊秀桃音樂營第三天 ＆ 異國風情踏查",
+                highlight: "哥哥沈浸營Final & 阿拉伯區與小印度全日探索",
+                // Map updated: Hotel -> YST -> Bugis -> Little India -> YST -> Hotel -> Luge -> VivoCity
+                mapLink: "https://www.google.com/maps/dir/Village+Hotel+Sentosa/Yong+Siew+Toh+Conservatory+of+Music/Kampong+Glam/Little+India/Yong+Siew+Toh+Conservatory+of+Music/Village+Hotel+Sentosa/Skyline+Luge+Singapore/VivoCity",
+                // Food Guide for Day 4 (Copied from Day 2 + Sargent Chicken Rice)
+                foodGuides: [
+                    {
+                        name: "Zam Zam (印度煎餅首選)",
+                        tag: "百年名店",
+                        price: "均價 SGD 8-15",
+                        image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop",
+                        desc: "位於蘇丹回教堂對面，招牌 Murtabak (印度肉餡煎餅) 厚度驚人，肉餡飽滿，中份就足夠兩人分食。",
+                        location: "Zam Zam Restaurant, North Bridge Road"
+                    },
+                    {
+                        name: "Delhi Lahori (必比登神級捲餅)",
+                        tag: "米其林 Bib Gourmand",
+                        price: "均價 SGD 6-8",
+                        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=800&auto=format&fit=crop", 
+                        desc: "小印度區 CP 值最高的攤位。現點現做的 Garlic Naan 外酥內軟，搭配香氣十足的 Keema (碎羊肉咖哩) 是絕配。",
+                        location: "Delhi Lahori, Tekka Centre"
+                    },
+                    {
+                        name: "Allauddin's Briyani (印度香飯之王)",
+                        tag: "米其林推薦",
+                        price: "均價 SGD 7",
+                        image: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?q=80&w=800&auto=format&fit=crop", 
+                        desc: "當地人的首選。羊肉燉得極其軟嫩入口即化，米飯吸收了多種香料精華，份量大附贈咖哩醬和醃菜。",
+                        location: "Allauddin's Briyani, Tekka Centre"
+                    },
+                    {
+                        name: "三巡海南雞飯 (Sargent Hainanese Chicken Rice)",
+                        tag: "慶功宴平價美味",
+                        price: "均價 SGD 6-10",
+                        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop", // Chicken rice generic
+                        desc: "位於 VivoCity 3樓 (大食代內)，雖然是美食街攤位但口味極佳，雞肉滑嫩，米飯香氣十足，是慶祝考試結束的美味選擇。",
+                        location: "Food Republic VivoCity"
+                    }
+                ],
+                schedule: [
+                    {
+                    time: "08:00 - 09:00",
+                    activity: "前往楊秀桃音樂學院 (YST)",
+                    desc: "搭乘 Grab 6-seater 送哥哥到學校參加最後一天的沈浸營。",
+                    type: "transport"
+                    },
+                    {
+                    time: "09:00 - 16:30",
+                    activity: "【Leander】YST 音樂營行程",
+                    desc: "音樂與理論的最終挑戰",
+                    subItems: [
+                        {
+                            name: "09:00 – 10:15",
+                            note: "基礎理論測試 (Rudiments Test)",
+                            details: "針對音樂理論基礎的測試環節，是入學評估的重要部分。",
+                            image: "https://images.unsplash.com/photo-1514117445516-2ec90fa4b84b?q=80&w=800&auto=format&fit=crop"
+                        },
+                        {
+                            name: "10:15 – 11:30",
+                            note: "中場休息",
+                            details: "休息時間，準備下午的協作環節。",
+                            image: "https://images.unsplash.com/photo-1465821185566-86666cc553fc?q=80&w=800&auto=format&fit=crop"
+                        },
+                        {
+                            name: "11:30 – 13:30",
+                            note: "午餐及校園導覽",
+                            details: "享用主辦單位提供的午餐，並由學長姐帶領進行深度的校園導覽。",
+                            image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=800&auto=format&fit=crop"
+                        },
+                        {
+                            name: "13:30 – 16:30",
+                            note: "協作音樂創作",
+                            details: "Collaborative Composition，與其他學員分組進行即興創作與演出，展現音樂互動能力。",
+                            image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "交通引導 1",
+                    activity: "【家人】YST -> 阿拉伯區",
+                    desc: "送完哥哥後，開始文化之旅。",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "巴士 + 地鐵",
+                        steps: [
+                        "步行至 Kent Ridge Terminal 公車站",
+                        "搭乘巴士至 Buona Vista 或 Clementi 地鐵站",
+                        "轉乘 EW線 (綠線) 直達 Bugis (EW12) 站",
+                        "從 B 出口出站，沿 Victoria St 步行 5 分鐘抵達哈芝巷"
+                        ]
+                    }
+                    },
+                    {
+                    time: "09:30 - 13:30",
+                    activity: "【家人】阿拉伯區深度遊",
+                    desc: "探索甘榜格南的異國風情。",
+                    subItems: [
+                        { 
+                        name: "1. 阿拉伯區 (Kampong Gelam)", 
+                        note: "馬來皇族歷史街區",
+                        image: "https://images.unsplash.com/photo-1624460599668-9a3d46387068?q=80&w=800&auto=format&fit=crop",
+                        details: "「甘榜格南」（Kampong Gelam）是新加坡最古老的城區之一。1822年，萊佛士爵士將這片區域劃分為馬來蘇丹及皇室成員的居住地，以及阿拉伯和武吉士商人的貿易區。這裡曾是區域性的伊斯蘭教育與貿易中心，名字源自馬來語「Kampung」（村莊）和「Gelam」（白千層樹）。漫步於此，您會強烈感受到歷史的厚度，街道名稱如巴格達街、坎大哈街，都訴說著早年與中東世界的緊密連結。如今，這裡是傳統與現代潮流碰撞最激烈的區域，保留了濃厚的穆斯林文化底蘊。",
+                        location: "Kampong Glam"
+                        },
+                        { 
+                        name: "2. 哈芝巷 (Haji Lane)", 
+                        note: "彩繪壁畫與文創",
+                        image: "https://images.unsplash.com/photo-1569924527734-d62c96c56149?q=80&w=800&auto=format&fit=crop",
+                        details: "從歷史街區轉入哈芝巷，氛圍瞬間變得年輕奔放。這條曾經是朝聖者前往麥加前落腳的陋巷，現在是新加坡最狹窄卻最精彩的街道之一。兩旁的戰前店屋牆面被大膽的塗鴉藝術（Graffiti Art）填滿，是視覺設計師尋找色彩靈感的寶庫。巷弄內擠滿了獨立設計師小店、古著店與風格咖啡館。建議您在此稍作停留，點一杯冷飲，欣賞牆上的藝術創作，感受新加坡年輕一代的生命力。",
+                        location: "Haji Lane"
+                        },
+                        { 
+                        name: "3. 蘇丹回教堂 (Sultan Mosque)", 
+                        note: "金色圓頂地標",
+                        image: "https://images.unsplash.com/photo-1569389274944-1294025a2df8?q=80&w=800&auto=format&fit=crop",
+                        details: "這是新加坡最壯觀的宗教建築之一，巨大的金色洋蔥圓頂與粉紅色的外牆是其標誌。建於1824年，最初是為了紀念新加坡第一任蘇丹——蘇丹胡先。目前的建築則是在1932年重建的。請仔細觀察圓頂的基座，那裡裝飾著一圈圈的玻璃瓶底，這些瓶子是由當時貧窮的穆斯林信徒捐贈的醬油瓶，象徵著無論貧富，每個人都能為建造聖殿貢獻一份心力。這是一個極具包容與團結意義的建築細節。",
+                        location: "Sultan Mosque"
+                        },
+                        { 
+                        name: "4. 阿拉伯街與巴索拉街", 
+                        note: "波斯地毯與香水",
+                        image: "https://images.unsplash.com/photo-1590497579899-73e4b776269f?q=80&w=800&auto=format&fit=crop", 
+                        details: "蘇丹回教堂前的巴索拉街（Bussorah Street）曾被稱為「蘇丹街」，兩旁種滿了棕櫚樹，是拍攝回教堂正面的最佳角度。而與之垂直的阿拉伯街（Arab Street），則是傳統紡織品的集散地。這裡的店舖掛滿了色彩斑斕的絲綢、蠟染布（Batik）、波斯地毯與精緻的蕾絲。空氣中瀰漫著無酒精香水（Attar）的獨特香氣，彷彿將人帶回了《一千零一夜》的故事場景。這裡非常適合尋找獨特的異國紀念品。",
+                        location: "Arab Street"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "交通引導 2",
+                    activity: "【家人】阿拉伯區 -> 小印度",
+                    desc: "移動至下一個文化區。",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "步行或地鐵",
+                        steps: [
+                        "方案 A (輕鬆)：從 Bugis (DT14) 搭乘藍線地鐵，2 站即達 Little India (DT12)",
+                        "方案 B (散步)：沿著 Rochor Canal Road 步行約 15-20 分鐘，沿途可欣賞城市風景"
+                        ]
+                    }
+                    },
+                    {
+                    time: "13:45 - 15:30",
+                    activity: "【家人】小印度色彩之旅",
+                    desc: "午餐後探索印度文化。",
+                    subItems: [
+                        { 
+                        name: "5. 小印度區 (Little India)", 
+                        note: "感官的極致體驗",
+                        image: "https://images.unsplash.com/photo-1605218427360-3a61848ac3ac?q=80&w=800&auto=format&fit=crop",
+                        details: "離開阿拉伯區，移動到小印度，您會立刻被濃烈的色彩與氣味包圍。這裡是新加坡印度社群的脈搏所在，源於早期的養牛業與磚窯業。沿著實龍崗路（Serangoon Road）漫步，這是一場感官的盛宴：耳邊是寶萊塢的音樂，鼻尖是茉莉花串與咖哩香料的混合氣息，眼前則是掛滿金飾與紗麗（Sari）的店舖。這裡保留了最原汁原味的印度生活方式，喧鬧、充滿活力且毫無保留。",
+                        location: "Little India"
+                        },
+                        { 
+                        name: "6. 陳東齡故居", 
+                        note: "色彩最繽紛的房子",
+                        image: "https://images.unsplash.com/photo-1600662287954-4df233140798?q=80&w=800&auto=format&fit=crop",
+                        details: "House of Tan Teng Niah 建於1900年，是小印度區現存極少數的華人別墅之一，見證了華人與印度社群在此共處的歷史。這棟兩層樓的別墅融合了中國南方建築風格與歐洲別墅的裝飾元素。最令人驚豔的是其後期的修復工程，將建築外觀漆成了極度大膽的彩虹色調，各種高飽和度的顏色在此碰撞，卻意外和諧，成為了小印度區最著名的打卡地標，也是視覺藝術設計絕佳的色彩學教材。",
+                        location: "House of Tan Teng Niah"
+                        },
+                        { 
+                        name: "7. 維拉馬卡里雅曼興都廟", 
+                        note: "二戰避難傳說",
+                        image: "https://images.unsplash.com/photo-1596700085429-7977a488e170?q=80&w=800&auto=format&fit=crop", 
+                        details: "這是小印度區最古老的興都廟之一，供奉著力量強大的卡莉女神（Kali，濕婆神的妻子，象徵毀滅與重生）。塔樓上雕刻著繁複的神像，色彩鮮豔。這座廟宇有一個著名的傳說：在二戰期間，當周圍的建築都被日軍轟炸夷為平地時，唯獨這座寺廟及其內部的避難者毫髮無傷。這段歷史讓這座廟宇在當地信徒心中擁有了崇高的地位。進去參觀記得脫鞋，感受那份莊嚴與神秘。",
+                        location: "Sri Veeramakaliamman Temple"
+                        },
+                        { 
+                        name: "8. 竹腳中心 (Tekka Centre)", 
+                        note: "午餐推薦",
+                        image: "https://images.unsplash.com/photo-1626848074902-60172605d3cb?q=80&w=800&auto=format&fit=crop", 
+                        details: "行程的終點來到竹腳中心。這不僅是一個熟食中心，樓下還有濕巴剎（菜市場），樓上則是販賣傳統印度服飾的商場。這裡是體驗新加坡多元種族融合的最佳地點，您可以看到華人、馬來人與印度人坐在同一張桌子上用餐。這裡是享用午餐的絕佳地點，推薦嘗試 Allauddin's Briyani 的羊肉香飯，或是 Delhi Lahori 的現烤饢餅。",
+                        location: "Tekka Centre"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "交通引導 3",
+                    activity: "【家人】小印度 -> YST 接哥哥",
+                    desc: "預計 15:30 出發，確保 16:30 準時抵達。",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "地鐵轉乘",
+                        steps: [
+                        "從 Little India (DT12) 搭乘地鐵藍線",
+                        "至 Botanic Gardens (DT9) 站",
+                        "轉乘 Circle Line (黃線) 至 Kent Ridge (CC24) 站",
+                        "轉乘 NUS 接駁車 (D2) 至音樂學院"
+                        ]
+                    }
+                    },
+                    {
+                    time: "16:30 - 17:30",
+                    activity: "接哥哥 & 帶琴回飯店",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "專車/Grab (樂器移動)",
+                        steps: [
+                        "恭喜哥哥考完試！前往 YST 接人與琴",
+                        "務必呼叫 Grab 6-seater / Grab Premium",
+                        "回悅樂聖淘沙酒店放好大提琴",
+                        "一身輕便，準備去玩滑車！"
+                        ]
+                    }
+                    },
+                    {
+                    time: "18:00 - 19:30",
+                    activity: "慶祝考試 Ending：斜坡滑車 & 空中吊椅 (4次)",
+                    desc: "考試結束大解放！挑戰 4 次不同路線的斜坡滑車，享受速度快感，並搭乘吊椅欣賞聖淘沙夕陽美景。",
+                    subItems: [
+                        { 
+                        name: "Skyline Luge Sentosa", 
+                        note: "聖淘沙必玩",
+                        image: "https://images.unsplash.com/photo-1596525737526-9d363c87796d?q=80&w=800&auto=format&fit=crop",
+                        details: "Skyline Luge 是源自紐西蘭的趣味活動。首先搭乘 Skyride 吊椅上山，雙腳懸空欣賞風景；接著駕駛 Luge 滑車沿著蜿蜒跑道滑下。共有四條路線：Kupu Kupu, Expedition, Jungle, Dragon。建議購買 4 次券，把每條路線都玩一遍！",
+                        location: "Skyline Luge Singapore"
+                        }
+                    ],
+                    type: "highlight"
+                    },
+                    {
+                    time: "20:00 - 21:00",
+                    activity: "慶功宴：三巡海南雞飯 (VivoCity)",
+                    desc: "前往怡豐城 3 樓的大食代 (Food Republic)，享用知名的三巡海南雞飯。",
+                    type: "highlight"
+                    }
+                ]
+                },
+                {
+                date: "2/11 (三)",
+                title: "Day 5: 環球影城全日遊",
+                highlight: "釋放壓力，Have Fun!",
+                mapLink: "https://www.google.com/maps/dir/Village+Hotel+Sentosa/Universal+Studios+Singapore/Village+Hotel+Sentosa",
+                schedule: [
+                    {
+                    time: "交通建議",
+                    activity: "飯店 -> 環球影城",
+                    type: "transport_detail",
+                    transportInfo: {
+                        method: "輕軌 (Sentosa Express)",
+                        steps: [
+                        "步行至 Imbiah Station (就在飯店旁)",
+                        "搭乘輕軌一站至 Waterfront Station (名勝世界)",
+                        "下車即達環球影城門口 (當然也可以步行，約15分鐘，但輕軌更有趣)"
+                        ]
+                    }
+                    },
+                    {
+                    time: "攻略情報",
+                    activity: "遊園策略 & 資訊",
+                    type: "transport_detail", 
+                    transportInfo: {
+                        method: "建議遊玩順序 (逆時針攻略)",
+                        steps: [
+                        "營業時間：10:00 - 19:00 (請依當日官網為準)",
+                        "官方網站：https://www.rwsentosa.com",
+                        "10:00 入園：直衝【小小兵樂園】(Minion Land) 體驗最新設施",
+                        "11:30 遙遠王國：【鞋貓劍客歷險記】",
+                        "13:00 失落的世界：【侏羅紀河流探險】(午餐可在此區解決)",
+                        "15:00 古埃及：【木乃伊復仇記】",
+                        "16:30 科幻城市：【太空堡壘】&【變形金剛】(下午通常人潮稍減或使用單人通道)",
+                        "19:00 閉園前：採買紀念品或欣賞煙火(若有)"
+                        ]
+                    }
+                    },
+                    {
+                    time: "10:00 - 20:00",
+                    activity: "新加坡環球影城 (USS)",
+                    desc: "全日暢玩，釋放考試壓力。必玩設施攻略：",
+                    subItems: [
+                        { 
+                        name: "神偷奶爸小小兵鬧翻天", 
+                        note: "小小兵樂園 | 歡樂指數 ★★★★★",
+                        image: "https://images.unsplash.com/photo-1557053503-0c252e5c8093?q=80&w=800&auto=format&fit=crop",
+                        details: "這將是 2026 年最新開幕的亮點設施！位於全新的「小小兵樂園（Minion Land）」。這是一個結合高解析度 3D 投影與實體佈景的動感模擬器遊樂設施。故事敘述您將被格魯（Gru）變成一隻黃色的小小兵，並參與一場瘋狂的「小小兵訓練計畫」。隨著巨大的圓頂螢幕畫面移動，座椅會配合劇情上下左右劇烈搖晃，帶您經歷一場充滿歡笑、混亂與溫馨的冒險。這個設施非常適合全家大小一起體驗，進入那個充滿香蕉與胡言亂語的瘋狂世界。",
+                        location: "Despicable Me Minion Mayhem Singapore"
+                        },
+                        { 
+                        name: "鞋貓劍客歷險記", 
+                        note: "遙遠王國 | 親子懸吊車 ★★★★",
+                        image: "https://images.unsplash.com/photo-1627845572622-c28373da2520?q=80&w=800&auto=format&fit=crop",
+                        details: "這座全球首創的懸吊式飛車，坐落在充滿童話色彩的「遙遠王國」區。不同於一般的過山車，它的車廂是懸掛在軌道下方的，模擬鞋貓劍客與女友 Kitty Softpaws 為了尋找傳說中的金蛋，攀爬巨大豆莖的冒險旅程。雖然有一定的高度，但速度適中，不會過於激烈，重點在於欣賞沿途精緻的故事佈景與體驗飛行的快感，非常適合想要嘗試一點點刺激但又不敢玩太激烈的家庭成員。",
+                        location: "Puss In Boots' Giant Journey"
+                        },
+                        { 
+                        name: "侏羅紀河流探險", 
+                        note: "失落的世界 | 濕身指數 ★★★★★",
+                        image: "https://images.unsplash.com/photo-1571406560372-e19277c22934?q=80&w=800&auto=format&fit=crop",
+                        details: "這是一個圓形橡皮艇的急流泛舟設施。您將進入恐龍保護區，原本是輕鬆的觀光行程，但途中系統突然故障，讓您漂流進入危險的猛禽區！設施結合了逼真的恐龍機械模型與水流特效。最驚險的時刻莫過於最後進入漆黑的電梯塔上升，然後在一片黑暗中高速俯衝入水，激起巨大的水花！強烈建議穿著雨衣，或者乾脆在中午炎熱時段來玩，享受全身濕透的消暑快感。",
+                        location: "Jurassic Park Rapids Adventure"
+                        },
+                        { 
+                        name: "木乃伊復仇記", 
+                        note: "古埃及 | 驚悚指數 ★★★★★",
+                        image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop",
+                        details: "這是一座在完全黑暗中進行的室內高速雲霄飛車，結合了心理恐懼與速度感。入口處兩尊巨大的阿努比斯像守護著古墓，營造出神秘肅殺的氣氛。進入設施後，您將深入法老的墓穴，遭遇成群的聖甲蟲、巨大的火球與木乃伊戰士的襲擊。雲霄飛車會在黑暗中急轉、突然停止甚至快速倒退，帶來極強的感官刺激。這是一個非常受歡迎的設施，請注意隨身物品必須先寄放在旁邊的免費置物櫃（限時免費）。",
+                        location: "Revenge of the Mummy"
+                        },
+                        { 
+                        name: "太空堡壘卡拉狄加", 
+                        note: "科幻城市 | 刺激指數 ★★★★★",
+                        image: "https://images.unsplash.com/photo-1505953041926-25838cf0994d?q=80&w=800&auto=format&fit=crop",
+                        details: "這是世界最高的雙軌過山車，代表著人類戰隊與機械戰隊的對決。紅色的軌道是「人類戰隊（Human）」，是坐式的過山車，雖然沒有倒轉，但速度極快，充滿強烈的推背感與失重感；灰色的軌道是「機械戰隊（Cylon）」，是懸掛式的過山車，雙腳懸空，過程中包含多個360度翻轉、螺旋與俯衝入霧坑。兩輛列車會同時出發並在空中多次交錯，驚險萬分。如果您喜歡挑戰極限，機械戰隊絕對是必玩首選！",
+                        location: "Battlestar Galactica: HUMAN vs. CYLON"
+                        },
+                        { 
+                        name: "變形金剛 3D 對決", 
+                        note: "科幻城市 | 必玩指數 ★★★★★",
+                        image: "https://images.unsplash.com/photo-1636537511659-155286595567?q=80&w=800&auto=format&fit=crop",
+                        details: "這被公認為環球影城的鎮園之寶。設施運用了最先進的 3D 高畫質媒體與飛行模擬技術，您將化身為博派金剛的新兵，搭乘新角色「Evac」，身歷其境參與柯博文與密卡登在城市中的終極大戰。您會感受到被拋摔、墜落、加速與爆破的熱浪，視覺效果與體感回饋極為真實。即使不是變形金剛的粉絲，也會被這場長達4分鐘的精彩冒險所震撼。建議一入園就先衝這項設施，因為排隊人潮通常最多。",
+                        location: "Transformers The Ride: The Ultimate 3D Battle"
+                        }
+                    ],
+                    type: "highlight"
+                    }
+                ]
+                },
+                {
+                date: "2/12 (四)",
+                title: "Day 6: 星耀樟宜 & 返家",
+                highlight: "世界最美機場",
+                mapLink: "https://www.google.com/maps/dir/Village+Hotel+Sentosa/Jewel+Changi+Airport/Changi+Airport+Terminal+3",
+                schedule: [
+                    {
+                    time: "10:30 - 12:00",
+                    activity: "星耀樟宜 (Jewel)",
+                    desc: "位於機場核心，參觀雨漩渦。",
+                    subItems: [
+                        { 
+                        name: "HSBC 雨漩渦", 
+                        note: "世界最高室內瀑布",
+                        image: "https://images.unsplash.com/photo-1566416922573-038c23246830?q=80&w=800&auto=format&fit=crop",
+                        details: "這是星耀樟宜的核心靈魂，也是世界上最高的室內瀑布。水流從高達40公尺的玻璃圓頂中心傾瀉而下，每分鐘有多達37,850公升的水循環流動，既壯觀又能調節室內氣溫。瀑布周圍環繞著四層樓高的「資生堂森林谷」，種植了超過2000棵樹木與10萬株灌木，彷彿將一座真正的熱帶雨林搬進了機場。建議您搭乘在 T2 與 T3 之間穿梭的 Skytrain，列車會緩緩駛過瀑布旁，讓您能近距離感受水霧與森林的震撼，這是道別新加坡前最完美的視覺句點。",
+                        location: "HSBC Rain Vortex"
+                        }
+                    ],
+                    type: "highlight"
+                    }
+                ]
+                }
+            ];
+
+            const AttractionModal = ({ attraction, onClose }) => {
+                if (!attraction) return null;
+
+                return (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
+                    <div className="flex min-h-full items-center justify-center p-4">
+                        <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-lg my-8" onClick={e => e.stopPropagation()}>
+                    
+                            {/* Close Button */}
+                            <button 
+                                onClick={onClose}
+                                className="absolute top-4 right-4 z-10 p-2 bg-black/30 hover:bg-black/50 text-white rounded-full backdrop-blur-md transition-colors"
+                            >
+                                <Icon name="X" size={20} />
+                            </button>
+
+                            {/* Image Header */}
+                            <div className="h-64 relative flex-shrink-0">
+                                <img 
+                                src={attraction.image} 
+                                alt={attraction.name} 
+                                onError={handleImageError}
+                                className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 p-6 text-white">
+                                <h3 className="text-2xl font-bold mb-1">{attraction.name}</h3>
+                                <p className="text-sm opacity-90 flex items-center gap-1">
+                                    <Icon name="Camera" size={14} /> 視覺焦點
+                                </p>
+                                </div>
+                            </div>
+
+                            {/* Content Body */}
+                            <div className="p-6">
+                                <div className="mb-6">
+                                <h4 className="text-teal-700 font-bold mb-2 flex items-center gap-2">
+                                    <Icon name="Info" size={18} />
+                                    景點故事與參觀建議
+                                </h4>
+                                <p className="text-slate-600 text-sm leading-7 text-justify">
+                                    {attraction.details}
+                                </p>
+                                </div>
+
+                                {/* Action Button */}
+                                <a 
+                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(attraction.location + " Singapore")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full py-3 bg-teal-600 hover:bg-teal-700 text-white text-center rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                                >
+                                <Icon name="Map" size={18} />
+                                在 Google 地圖上查看此景點
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+                
+                {/* Modal Render */}
+                {selectedAttraction && (
+                    <AttractionModal 
+                    attraction={selectedAttraction} 
+                    onClose={() => setSelectedAttraction(null)} 
+                    />
+                )}
+
+                {/* Header Image Area */}
+                <div className="relative h-80 md:h-96 bg-teal-900 overflow-hidden">
+                    {/* Background Layer 1: Singapore (Right) */}
+                    <div className="absolute inset-0">
+                        <img 
+                            src="https://images.unsplash.com/photo-1565967511849-76a60a516170?q=80&w=2071&auto=format&fit=crop" 
+                            alt="Singapore Skyline" 
+                            className="w-full h-full object-cover object-right opacity-60 banner-mask-right"
+                        />
+                    </div>
+                    
+                    <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-transparent to-transparent"></div>
+                    
+                    <div className="absolute bottom-0 left-0 p-6 md:p-12 text-white z-10 w-full">
+                        <div className="flex items-center space-x-2 mb-2">
+                            <span className="px-3 py-1 bg-amber-500 rounded-full text-xs font-bold tracking-wider uppercase text-white shadow-lg">
+                            Family Trip
+                            </span>
+                            <span className="px-3 py-1 bg-teal-600/80 rounded-full text-xs font-bold tracking-wider uppercase text-white shadow-lg backdrop-blur-sm">
+                            2026.02.07 - 02.12
+                            </span>
+                        </div>
+                        {/* Updated Title and Subtitle */}
+                        <h1 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
+                            2026新加坡圓夢之旅
+                        </h1>
+                        <p className="text-teal-100 text-lg md:text-xl font-light max-w-2xl drop-shadow-md">
+                            為Leander大提琴的音樂夢，前進楊秀桃Go! Go!! Go!!!
+                        </p>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <main className="max-w-4xl mx-auto px-4 py-8 -mt-8 relative z-10">
+                    
+                    {/* Navigation Tabs */}
+                    <div className="flex overflow-x-auto pb-4 gap-3 no-scrollbar mb-6 snap-x">
+                    {tripData.map((day, index) => (
+                        <button
+                        key={index}
+                        onClick={() => setActiveDay(index)}
+                        className={`snap-center flex-shrink-0 px-5 py-3 rounded-xl transition-all duration-300 shadow-sm border border-slate-200 flex flex-col items-center min-w-[100px] ${
+                            activeDay === index 
+                            ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-md transform scale-105' 
+                            : 'bg-white/80 hover:bg-white text-slate-500 hover:text-teal-600'
+                        }`}
+                        >
+                        <span className={`text-xs font-bold uppercase mb-1 ${activeDay === index ? 'text-teal-600' : 'text-slate-400'}`}>
+                            {day.date.split(' ')[0]}
+                        </span>
+                        <span className={`text-sm font-semibold whitespace-nowrap ${activeDay === index ? 'text-slate-800' : ''}`}>
+                            Day {index + 1}
+                        </span>
+                        </button>
+                    ))}
+                    </div>
+
+                    {/* Day Detail Card */}
+                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 animate-fadeIn">
+                    {/* Card Header */}
+                    <div className="p-6 md:p-8 bg-gradient-to-r from-teal-50 to-white border-b border-teal-100">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold text-teal-900 mb-2 flex items-center gap-2">
+                            {tripData[activeDay].title}
+                            </h2>
+                            <p className="text-slate-600 flex items-center gap-2 mb-3">
+                            <Icon name="Sun" size={18} className="text-amber-500" />
+                            {tripData[activeDay].highlight}
+                            </p>
+                            
+                            {/* Daily Route Map Link */}
+                            {tripData[activeDay].mapLink && (
+                            <a 
+                                href={tripData[activeDay].mapLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-semibold transition-colors border border-blue-200"
+                            >
+                                <Icon name="Map" size={16} />
+                                開啟本日 Google 地圖路線規劃
+                                <Icon name="ExternalLink" size={12} />
+                            </a>
+                            )}
+                        </div>
+                        </div>
+                    </div>
+
+                    {/* Timeline */}
+                    <div className="p-6 md:p-8 space-y-8">
+                        {tripData[activeDay].schedule.map((item, idx) => (
+                        <div key={idx} className="relative pl-8 md:pl-10 border-l-2 border-slate-100 last:border-0">
+                            {/* Timeline Dot */}
+                            <div className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-2 ${
+                            item.type === 'transport' ? 'bg-blue-50 border-blue-400' :
+                            item.type === 'transport_detail' ? 'bg-blue-500 border-blue-600 shadow-sm' :
+                            item.type === 'hotel' ? 'bg-indigo-50 border-indigo-400' :
+                            item.type === 'rest' ? 'bg-slate-50 border-slate-400' :
+                            'bg-amber-50 border-amber-500'
+                            }`}></div>
+
+                            {/* Content */}
+                            <div className="mb-8">
+                            {item.type === 'transport_detail' ? (
+                                /* Detailed Transport Card */
+                                <div className="bg-blue-50 rounded-xl p-5 border border-blue-100 shadow-sm">
+                                <div className="flex items-center gap-2 mb-3 text-blue-700 font-bold">
+                                    <Icon name="Train" size={18} />
+                                    <span>{item.activity}</span>
+                                </div>
+                                <div className="text-sm text-slate-700 mb-2 font-semibold">
+                                    <span className="bg-blue-200 text-blue-800 px-2 py-0.5 rounded text-xs mr-2">推薦方式</span>
+                                    {item.transportInfo.method}
+                                </div>
+                                <ul className="space-y-2">
+                                    {item.transportInfo.steps.map((step, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                                        <div className="min-w-[20px] h-[20px] rounded-full bg-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold mt-0.5">
+                                        {i + 1}
+                                        </div>
+                                        <span>{step}</span>
+                                    </li>
+                                    ))}
+                                </ul>
+                                </div>
+                            ) : (
+                                /* Standard Activity */
+                                <>
+                                <div className="flex items-center gap-3 mb-2">
+                                    {item.time && (
+                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded flex items-center gap-1">
+                                        <Icon name="Clock" size={12} /> {item.time}
+                                    </span>
+                                    )}
+                                    {item.type === 'transport' && <Icon name="Bus" size={14} className="text-blue-400" />}
+                                    {item.type === 'highlight' && <Icon name="Camera" size={14} className="text-amber-500" />}
+                                </div>
+                                
+                                <h3 className="text-lg font-bold text-slate-800 mb-1">{item.activity}</h3>
+                                {item.desc && <p className="text-slate-600 text-sm leading-relaxed mb-3">{item.desc}</p>}
+
+                                {/* Sub-items (Attractions/Details) - Clickable Grid */}
+                                {item.subItems && (
+                                    <div className="grid gap-4 mt-4 sm:grid-cols-2">
+                                    {item.subItems.map((sub, sIdx) => (
+                                        <div 
+                                        key={sIdx} 
+                                        onClick={() => setSelectedAttraction(sub)}
+                                        className="group cursor-pointer bg-slate-50 p-4 rounded-xl border border-slate-200 hover:border-teal-400 hover:shadow-md transition-all duration-200 flex items-start gap-3"
+                                        >
+                                        {/* Thumbnail */}
+                                        {sub.image && (
+                                            <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-slate-200">
+                                            <img 
+                                                src={sub.image} 
+                                                alt={sub.name} 
+                                                onError={handleImageError}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                            />
+                                            </div>
+                                        )}
+                                        
+                                        <div className="flex-1">
+                                            <h4 className="font-bold text-slate-700 text-sm mb-1 group-hover:text-teal-600 flex items-center justify-between">
+                                            {sub.name}
+                                            <Icon name="Info" size={14} className="opacity-0 group-hover:opacity-100 text-teal-500 transition-opacity" />
+                                            </h4>
+                                            <p className="text-xs text-slate-500 line-clamp-2">{sub.note}</p>
+                                            <p className="text-xs text-teal-600 mt-1 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                            點擊查看詳情...
+                                            </p>
+                                        </div>
+                                        </div>
+                                    ))}
+                                    </div>
+                                )}
+                                </>
+                            )}
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+
+                    {/* Food Guide Section (New!) */}
+                    {tripData[activeDay].foodGuides && (
+                        <div className="border-t border-slate-100 p-6 md:p-8 bg-amber-50/50">
+                            <h3 className="text-xl font-bold text-amber-700 mb-6 flex items-center gap-2">
+                                <Icon name="Utensils" size={20} /> 今日美食推薦
+                            </h3>
+                            <div className="grid gap-6 md:grid-cols-2">
+                                {tripData[activeDay].foodGuides.map((food, idx) => (
+                                    <div key={idx} className="bg-white rounded-xl shadow-sm border border-amber-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+                                        <div className="h-40 w-full overflow-hidden relative">
+                                            <img 
+                                                src={food.image} 
+                                                alt={food.name} 
+                                                onError={handleImageError}
+                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                                            />
+                                            <div className="absolute top-2 right-2 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded shadow">
+                                                {food.price}
+                                            </div>
+                                        </div>
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            <div className="mb-2">
+                                                <span className="text-xs font-bold text-amber-600 uppercase tracking-wide bg-amber-50 px-2 py-0.5 rounded-full">
+                                                    {food.tag}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-bold text-slate-800 mb-2">{food.name}</h4>
+                                            <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-1">
+                                                {food.desc}
+                                            </p>
+                                            <a 
+                                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(food.location + " Singapore")}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="mt-auto flex items-center justify-center gap-2 w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-lg transition-colors"
+                                            >
+                                                <Icon name="Map" size={14} /> 導航
+                                            </a>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    </div>
+
+                    {/* Info & Tips Toggle */}
+                    <div className="mt-8">
+                    <button 
+                        onClick={() => setShowTips(!showTips)}
+                        className="w-full flex items-center justify-between p-4 bg-teal-800 text-white rounded-xl shadow-lg hover:bg-teal-900 transition-colors"
+                    >
+                        <div className="flex items-center gap-3">
+                        <Icon name="Info" size={20} />
+                        <span className="font-bold">設計師爸爸的旅行備忘錄</span>
+                        </div>
+                        <Icon name="ArrowRight" size={20} className={`transform transition-transform ${showTips ? 'rotate-90' : ''}`} />
+                    </button>
+
+                    {showTips && (
+                        <div className="mt-4 grid md:grid-cols-2 gap-4 animate-slideDown">
+                        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <h4 className="font-bold text-teal-700 mb-3 flex items-center gap-2">
+                            <Icon name="Music" size={16} /> 大提琴移動指南
+                            </h4>
+                            <ul className="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                            <li><strong>Grab 車型：</strong> 大提琴體積較大，若加上四人同行，普通 GrabCar 可能塞不下。強烈建議呼叫 <strong>Grab 6-seater</strong> (六人座) 或 <strong>GrabCar Premium</strong>。</li>
+                            <li><strong>地鐵：</strong> 離峰時段搭乘地鐵攜帶樂器是OK的，請使用電梯並選擇第一節或最後一節車廂較空曠。</li>
+                            <li><strong>飯店寄放：</strong> 悅樂聖淘沙的 Concierge 習慣處理大型行李，寄放樂器通常沒問題，但建議確認是否能放在有空調的辦公室內以免溫差過大。</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <h4 className="font-bold text-teal-700 mb-3 flex items-center gap-2">
+                            <Icon name="Footprints" size={16} /> 生活建議
+                            </h4>
+                            <ul className="text-sm text-slate-600 space-y-2 list-disc list-inside">
+                            <li><strong>YST 位置：</strong> 音樂學院位於 NUS 校園南側，Grab 定位請設 "Yong Siew Toh Conservatory of Music"。</li>
+                            <li><strong>防曬與雨具：</strong> 2月也是雨季，隨身攜帶摺疊傘，這也是為什麼行程多安排室內備案 (如博物館/商場)。</li>
+                            <li><strong>聖淘沙進出：</strong> 住悅樂聖淘沙可索取 Sentosa Express pass (單軌列車) 免費搭乘券，進出島嶼很方便。</li>
+                            </ul>
+                        </div>
+                        </div>
+                    )}
+                    </div>
+
+                </main>
+
+                {/* Footer */}
+                <footer className="bg-white border-t border-slate-200 mt-12 py-8 text-center text-slate-400 text-sm">
+                    <p>© 2026 專屬訂製行程 | Designed with ❤️ for the Cello Family</p>
+                    <p className="mt-1 text-xs">祝 考試順利 旅途愉快</p>
+                </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ItineraryApp />);
+    </script>
+</body>
+</html>
