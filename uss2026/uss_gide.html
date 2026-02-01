@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USS 新加坡環球影城攻略 2026</title>
+    <!-- Tailwind CSS (用於快速樣式) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons (圖標庫) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* 小小兵風格背景 */
+        body {
+            background-color: #fefce8; /* Yellow-50 */
+            background-image: 
+                radial-gradient(#3b82f6 0.5px, transparent 0.5px), 
+                radial-gradient(#3b82f6 0.5px, #fefce8 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* 隱藏滾動條但保持功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Modal 動畫 */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms, transform 300ms;
+        }
+        .modal-exit {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms, transform 200ms;
+        }
+    </style>
+</head>
+<body class="text-gray-800 selection:bg-yellow-200">
+
+    <!-- Navbar -->
+    <nav class="bg-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <span class="font-bold text-xl text-indigo-700 flex items-center">
+                    <span class="bg-indigo-600 text-white p-1 rounded mr-2">USS</span>
+                    Guide 2026
+                </span>
+                <div class="flex space-x-4">
+                    <button onclick="switchTab('guide')" id="btn-guide" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-600 bg-indigo-50 transition">
+                        攻略指南
+                    </button>
+                    <button onclick="switchTab('game')" id="btn-game" class="px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 transition">
+                        模擬遊戲
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="pb-20 relative">
+        
+        <!-- GUIDE TAB -->
+        <div id="tab-guide">
+            <!-- Hero Section -->
+            <div class="relative h-96 bg-gradient-to-r from-yellow-400 to-blue-600 text-white overflow-hidden shadow-xl">
+                <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1597466599360-3b9775841aec?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/80"></div>
+                <div class="relative z-10 max-w-6xl mx-auto px-4 h-full flex flex-col justify-center items-start">
+                    <div class="bg-yellow-300 text-black font-bold px-3 py-1 rounded-full text-sm mb-4 inline-block animate-bounce shadow-md">
+                        2026 全新攻略版 🍌
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight drop-shadow-md">
+                        USS 新加坡環球影城<br/>
+                        <span class="text-yellow-300">極限一日遊指南</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-100 max-w-2xl drop-shadow">
+                        無快速通關・最新小小兵樂園・2026/02/11 實戰計畫
+                    </p>
+                    <div class="mt-8 flex gap-4">
+                        <a href="#full-guide" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-3 px-6 rounded-lg transition shadow-lg flex items-center border-2 border-yellow-200">
+                            <i data-lucide="map" class="w-5 h-5 mr-2"></i> 全園區攻略
+                        </a>
+                        <a href="#attractions-list" class="bg-blue-600/80 hover:bg-blue-500/80 backdrop-blur-sm border border-blue-400 text-white font-bold py-3 px-6 rounded-lg transition flex items-center">
+                            <i data-lucide="camera" class="w-5 h-5 mr-2"></i> 設施圖鑑
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="max-w-6xl mx-auto px-4 -mt-10 relative z-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Time -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="clock" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">營業時間 (2/11)</h3>
+                    </div>
+                    <p class="text-2xl font-bold text-indigo-900">10:00 - 20:00</p>
+                    <p class="text-sm mt-2 text-gray-500">建議抵達時間：<span class="text-red-500 font-bold">09:30</span></p>
+                    <p class="text-xs text-gray-400 mt-1">*時間可能變動，請下載 App 確認</p>
+                </div>
+
+                <!-- Ticket -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="ticket" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">購票優惠</h3>
+                    </div>
+                    <p class="mb-3 text-sm text-gray-600">現場購票較貴，強烈建議預先購買電子票。</p>
+                    <div class="flex flex-col space-y-2">
+                        <a href="https://www.klook.com/zh-TW/activity/117-universal-studios-singapore-ticket/" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded text-sm font-bold flex items-center justify-center transition">
+                            Klook 購票 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                        </a>
+                        <a href="https://www.kkday.com/zh-tw/product/2312" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm font-bold flex items-center justify-center transition">
+                            KKday 購票 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- App -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="smartphone" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">下載官方 App</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex flex-col items-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/sg/app/universal-studios-singapore/id1462742095" alt="iOS QR" class="w-16 h-16 mb-2 mix-blend-multiply">
+                            <a href="https://apps.apple.com/sg/app/universal-studios-singapore/id1462742095" target="_blank" class="text-xs font-bold text-gray-700 hover:text-indigo-600 underline">App Store</a>
+                        </div>
+                        <div class="flex flex-col items-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.rwsentosa.UniversalSG" alt="Android QR" class="w-16 h-16 mb-2 mix-blend-multiply">
+                            <a href="https://play.google.com/store/apps/details?id=com.rwsentosa.UniversalSG" target="_blank" class="text-xs font-bold text-gray-700 hover:text-indigo-600 underline">Google Play</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Alert -->
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 my-6 rounded-r-lg shadow-sm mx-4 max-w-6xl md:mx-auto">
+                <div class="flex items-start">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-500 mr-3 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-red-800 text-lg">設施維修警報 (2026/02/11)</h4>
+                        <p class="text-red-700 mt-1">
+                            根據資料，<strong>「太空堡壘卡拉狄加 (雙軌過山車)」</strong> 預計於 1/28 至 2/14 進行年度維修。
+                            <br/>
+                            <span class="text-sm mt-1 block">
+                                * 侏羅紀河流探險：維修至 2/8，您 2/11 前往時已經<strong>正常開放</strong>。
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attractions Gallery Section -->
+            <div id="attractions-list" class="max-w-6xl mx-auto px-4 mt-12 scroll-mt-24">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 border-l-4 border-yellow-400 pl-4">
+                        全園區設施圖鑑
+                    </h2>
+                    <!-- Filter Buttons -->
+                    <div id="zone-filters" class="mt-4 md:mt-0 flex overflow-x-auto pb-2 md:pb-0 space-x-2 no-scrollbar">
+                        <!-- JS will populate buttons -->
+                    </div>
+                </div>
+                
+                <!-- Cards Grid -->
+                <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS will populate cards -->
+                </div>
+            </div>
+
+            <!-- Full Zone Guide Section -->
+            <div id="full-guide" class="max-w-6xl mx-auto px-4 mt-16 bg-white/90 backdrop-blur rounded-2xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-indigo-900 flex items-center">
+                            <i data-lucide="map" class="w-8 h-8 mr-3 text-indigo-600"></i>
+                            七大園區地圖 & 動線攻略
+                        </h2>
+                        <p class="text-indigo-600 mt-2">
+                            建議入園後採 <span class="font-bold bg-white px-2 py-1 rounded">逆時針 (向左)</span> 方向遊玩，先避開早上的好萊塢購物人潮。
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-sm bg-white px-4 py-2 rounded-full shadow text-indigo-700 font-bold border border-indigo-100">
+                        路線：入口 → 小小兵 → 遙遠王國 → 失落世界 → 古埃及 → 科幻城市 → 紐約 → 好萊塢
+                    </div>
+                </div>
+
+                <!-- Park Map Component -->
+                <div class="w-full bg-gray-100 rounded-xl overflow-hidden shadow-lg border border-gray-200 relative group mb-10">
+                    <div class="absolute top-4 left-4 z-10 bg-white/95 p-3 rounded-lg shadow-lg border border-gray-200 backdrop-blur-md">
+                        <h4 class="font-bold text-indigo-800 flex items-center text-sm mb-1">
+                            <i data-lucide="image" class="w-4 h-4 mr-2"></i> 園區地圖
+                        </h4>
+                        <span class="text-xs text-gray-500 block">USS Official Map View</span>
+                    </div>
+                    
+                    <!-- Fallback SVG Map (Hidden by default, shown if image fails) -->
+                    <div id="fallback-map" class="hidden w-full h-auto aspect-video bg-blue-50 flex items-center justify-center">
+                        <svg viewBox="0 0 800 600" class="w-full h-full" style="max-height:600px;">
+                            <rect width="800" height="600" fill="#f0f9ff"/>
+                            <path d="M 300 250 Q 400 200 500 250 Q 550 350 400 400 Q 250 350 300 250 Z" fill="#93C5FD" stroke="#3B82F6" stroke-width="2" />
+                            <text x="400" y="300" text-anchor="middle" font-size="20" fill="#1e40af">SVG 地圖預覽 (請確認圖片檔案存在)</text>
+                            <!-- 簡化版示意圖，實際功能由 JS 控制切換 -->
+                        </svg>
+                    </div>
+
+                    <!-- Image Map -->
+                    <img 
+                        id="park-map-img"
+                        src="uss-park-map-3840x2160-ch-v1.jpg" 
+                        alt="新加坡環球影城園區地圖" 
+                        class="w-full h-auto object-cover"
+                        onerror="document.getElementById('park-map-img').style.display='none'; document.getElementById('fallback-map').classList.remove('hidden');"
+                    />
+                    
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        提示：若圖片未顯示，請確認檔案 'uss-park-map-3840x2160-ch-v1.jpg' 位於相同資料夾中
+                    </div>
+                </div>
+
+                <!-- Zone Cards Grid -->
+                <div id="zones-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS will populate -->
+                </div>
+            </div>
+
+            <!-- Strategy Section -->
+            <div id="strategy" class="max-w-6xl mx-auto px-4 mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i data-lucide="clock" class="w-6 h-6 mr-2 text-indigo-600"></i> 
+                            2/11 (週三) 無快通戰鬥行程表
+                        </h3>
+                        <div class="relative border-l-2 border-indigo-200 ml-3 space-y-8" id="strategy-timeline">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <!-- Food -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-orange-600">
+                            <i data-lucide="coffee" class="mr-2"></i> 美食推薦
+                        </h3>
+                        <ul class="space-y-4">
+                            <li class="border-b pb-2">
+                                <span class="font-bold block text-gray-800">馬來西亞美食街 (園外)</span>
+                                <span class="text-sm text-gray-500">入口旁，CP 值最高。推薦：肉骨茶、炒粿條。</span>
+                            </li>
+                            <li class="border-b pb-2">
+                                <span class="font-bold block text-gray-800">Goldilocks (遙遠王國)</span>
+                                <span class="text-sm text-gray-500">炸雞套餐，園區內相對平價且好吃的選擇。</span>
+                            </li>
+                            <li class="pb-2">
+                                <span class="font-bold block text-gray-800">小小兵咖啡廳 (Minion Land)</span>
+                                <span class="text-sm text-gray-500">打卡必備！小小兵造型甜點與漢堡。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Souvenir -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-pink-600">
+                            <i data-lucide="shopping-bag" class="mr-2"></i> 必買紀念品
+                        </h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>小小兵爆米花桶 (最新造型)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>Tim Bear (Bob 的泰迪熊)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>變形金剛水壺 (實用派)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>芝麻街髮箍 (拍照必備)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 mt-16 mb-8 text-center text-gray-600 text-sm font-medium">
+                <p>Designed by AI Guide | 資料來源：Mimi韓、Klook、2A夫妻</p>
+                <p class="mt-2">祝您 2026/02/11 旅途愉快！</p>
+            </div>
+        </div>
+
+        <!-- GAME TAB -->
+        <div id="tab-game" class="hidden">
+            <div class="max-w-4xl mx-auto px-4 mt-10 flex flex-col items-center">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">線上模擬挑戰</h2>
+                <p class="mb-8 text-gray-600 max-w-lg text-center">
+                    在前往新加坡之前，先來測試你的反應神經！這就像在 USS 裡趕場一樣刺激。
+                    操作說明：使用鍵盤左右鍵或手指拖曳，閃避「維修標誌」與「木乃伊」，收集「香蕉」！
+                </p>
+                
+                <!-- Canvas Game Container -->
+                <div class="bg-gray-900 rounded-xl p-4 text-white text-center shadow-2xl border-4 border-yellow-400">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-bold text-yellow-400 flex items-center justify-center">
+                            <i data-lucide="gamepad-2" class="mr-2"></i> 木乃伊極速逃生
+                        </h3>
+                    </div>
+                    <div class="relative mx-auto w-full max-w-[320px] h-[400px] bg-indigo-950 rounded-lg overflow-hidden border-2 border-indigo-700">
+                        <canvas id="gameCanvas" width="320" height="400" class="block mx-auto"></canvas>
+                        
+                        <!-- Start Screen -->
+                        <div id="game-start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-black/70">
+                            <button onclick="startGame()" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full transform transition hover:scale-105 shadow-lg">
+                                開始挑戰
+                            </button>
+                            <p class="mt-4 text-xs text-gray-300">電腦：左右鍵控制 / 手機：觸控拖曳</p>
+                        </div>
+
+                        <!-- Game Over Screen -->
+                        <div id="game-over-screen" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/80">
+                            <h4 class="text-3xl font-bold text-red-500 mb-2">GAME OVER</h4>
+                            <p class="text-white text-xl mb-4">得分: <span id="final-score">0</span></p>
+                            <button onclick="startGame()" class="bg-white text-black font-bold py-2 px-6 rounded-full hover:bg-gray-200">
+                                再試一次
+                            </button>
+                        </div>
+                        
+                        <!-- Score HUD -->
+                        <div id="game-hud" class="hidden absolute top-2 left-2 bg-black/50 px-2 py-1 rounded text-yellow-400 font-mono text-sm">
+                            SCORE: <span id="current-score">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Floating Info Modal -->
+    <div id="info-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white w-full h-[85vh] max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col relative transform transition-all duration-300 scale-95" id="modal-content">
+            <!-- Header -->
+            <div class="flex justify-between items-center p-3 px-4 border-b bg-gray-50">
+                <div class="flex items-center">
+                    <span id="modal-title" class="font-bold text-gray-700">資訊預覽</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a id="modal-new-window" href="#" target="_blank" class="px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-md text-sm font-bold flex items-center transition">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-1"></i> 開啟新視窗
+                    </a>
+                    <button onclick="closeModal()" class="p-1.5 hover:bg-gray-200 rounded-full text-gray-500 transition">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Content -->
+            <div class="flex-grow bg-gray-100 relative">
+                <iframe id="modal-iframe" src="" class="w-full h-full border-0" allow="geolocation" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+                <!-- Loading Hint -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center -z-10">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
+                    <p class="text-gray-500 text-sm">正在載入資訊...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // --- Data ---
+        const ALL_ATTRACTIONS = [
+            { id: 'minion-mayhem', name: '神偷奶爸：小小兵鬧翻天', zone: '小小兵樂園', thrillLevel: 3, description: '進入格魯的實驗室，體驗沉浸式 3D 動感乘車遊。', tips: '入園首選！最新設施排隊最久。', isOpen: true, type: 'ride', image: 'https://lh3.googleusercontent.com/gg-dl/AOI_d__Glw-yc1P0ZVxGvPrwCTHPOiSh_D6XO3n3kGcBKoUPXxuJpOr5w56FF5F2z2DCSVQ4RrL2Pdwv5azwIMqn0C_3IanLzHQIPJmEgutMSpHllzOyz2kSKBOktHjtrbhCRUMx8fu3XrWgdRqqVyfwICqX7jTQMv5b2nDVxBED_fNH8eZBrA=s1024-rj' },
+            { id: 'buggie-boogie', name: '小蟲萌萌轉', zone: '小小兵樂園', thrillLevel: 2, description: '小小兵主題的旋轉舞會，適合親子同樂。', tips: '造型非常可愛，適合拍照。', isOpen: true, type: 'ride' },
+            { id: 'silly-swirl', name: '萌樂漩渦', zone: '小小兵樂園', thrillLevel: 2, description: '色彩繽紛的旋轉遊樂設施。', tips: '排隊時間通常較短。', isOpen: true, type: 'ride' },
+            { id: 'puss', name: '鞋貓劍客歷險記', zone: '遙遠王國', thrillLevel: 3, description: '懸吊式過山車，跟著鞋貓尋找金蛋。', tips: '雖然是家庭過山車，但有些微離心力，很好玩。', isOpen: true, type: 'ride' },
+            { id: 'shrek', name: '史瑞克 4D 影院', zone: '遙遠王國', thrillLevel: 2, description: '跟隨史瑞克營救公主，感受視覺與觸覺特效。', tips: '冷氣很強，適合中午避暑。', isOpen: true, type: 'show' },
+            { id: 'enchanted-airways', name: '小龍飛行學校', zone: '遙遠王國', thrillLevel: 3, description: '小型過山車，適合小朋友的入門挑戰。', tips: '排隊隊伍移動較慢。', isOpen: true, type: 'ride' },
+            { id: 'jurassic-rapids', name: '侏羅紀河流探險', zone: '失落的世界', thrillLevel: 4, description: '圓形漂流筏，最後從高處俯衝入水。', tips: '必濕！請自備雨衣。(2/11已開放)', isOpen: true, type: 'ride' },
+            { id: 'waterworld', name: '未來水世界 Show', zone: '失落的世界', thrillLevel: 5, description: '實景特技表演，爆破、跳水非常震撼。', tips: '全濕區(綠色椅子)真的會全濕。', isOpen: true, type: 'show' },
+            { id: 'canopy-flyer', name: '天幕飛行', zone: '失落的世界', thrillLevel: 3, description: '懸掛式飛行車，俯瞰侏羅紀園區。', tips: '排隊效率低，若超過 40 分鐘建議跳過。', isOpen: true, type: 'ride' },
+            { id: 'mummy', name: '木乃伊復仇記', zone: '古埃及', thrillLevel: 5, description: '室內高速過山車，黑暗中急轉與倒退。', tips: '極致刺激！需寄物。', isOpen: true, type: 'ride' },
+            { id: 'treasure-hunters', name: '尋寶奇兵', zone: '古埃及', thrillLevel: 1, description: '駕駛吉普車的悠閒軌道車。', tips: '速度非常慢，僅適合拍照或幼童。', isOpen: true, type: 'ride' },
+            { id: 'transformers', name: '變形金剛 3D 對決', zone: '科幻城市', thrillLevel: 4, description: '3D 沉浸式戰鬥，體驗高空墜落快感。', tips: '傍晚人潮較少。', isOpen: true, type: 'ride' },
+            { id: 'battlestar-human', name: '太空堡壘：人類戰隊', zone: '科幻城市', thrillLevel: 5, description: '坐式過山車，無倒轉但速度極快。', tips: '⚠️ 維修警報 (1/28-2/14)。', isOpen: false, type: 'ride' },
+            { id: 'battlestar-cylon', name: '太空堡壘：機械戰隊', zone: '科幻城市', thrillLevel: 5, description: '懸掛式過山車，有多處翻轉與零重力。', tips: '⚠️ 維修警報 (1/28-2/14)。', isOpen: false, type: 'ride' },
+            { id: 'accelerator', name: '旋轉飛盤', zone: '科幻城市', thrillLevel: 3, description: '科幻版的咖啡杯。', tips: '飯後不建議搭乘。', isOpen: true, type: 'ride' },
+            { id: 'sesame-spaghetti', name: '芝麻街義大利麵太空戰', zone: '紐約', thrillLevel: 2, description: '室內懸掛慢速車，場景非常可愛。', tips: '冷氣很涼，適合休息拍照。', isOpen: true, type: 'ride' },
+            { id: 'lights-camera', name: '電影特效片場', zone: '紐約', thrillLevel: 2, description: '史蒂芬史匹柏主持，展示颶風特效。', tips: '第一排會被水潑到。', isOpen: true, type: 'show' },
+            { id: 'hollywood-meet', name: '好萊塢星光大道', zone: '好萊塢', thrillLevel: 1, description: '小小兵、功夫熊貓等角色見面會。', tips: '請參考 App 上的見面會時間表。', isOpen: true, type: 'meet' }
+        ];
+
+        const ZONES = [
+            { name: '1. 好萊塢', description: '入園第一站，購物與星光大道。', facilities: ['角色見面會', 'Hello Kitty'], dining: ['星巴克', '梅爾斯快餐'], shopping: ['禮品店', '小小兵專賣店'], strategy: '先衝設施，閉園前再來買。' },
+            { name: '2. 小小兵樂園', description: '2025 全新開幕！入園左手邊。', facilities: ['小小兵鬧翻天', '萌樂漩渦'], dining: ['小小兵咖啡廳'], shopping: ['小小兵市集'], strategy: '早上 10:00 直衝這裡！' },
+            { name: '3. 遙遠王國', description: '史瑞克的城堡童話氛圍。', facilities: ['史瑞克 4D', '鞋貓劍客'], dining: ['Goldilocks 炸雞'], shopping: ['神仙教母商店'], strategy: '適合中午吹冷氣。' },
+            { name: '4. 失落的世界', description: '侏羅紀公園與未來水世界。', facilities: ['河流探險', '水世界表演'], dining: ['東南亞美食'], shopping: ['侏羅紀專賣店'], strategy: '下午玩水消暑。' },
+            { name: '5. 古埃及', description: '神祕古文明與木乃伊。', facilities: ['木乃伊復仇記', '尋寶奇兵'], dining: ['綠洲香料館'], shopping: ['卡特寶庫'], strategy: '必玩木乃伊，需寄物。' },
+            { name: '6. 科幻城市', description: '未來感與最刺激設施。', facilities: ['變形金剛', '太空堡壘(修)'], dining: ['星際戰車'], shopping: ['變形金剛裝備庫'], strategy: '變形金剛傍晚人較少。' },
+            { name: '7. 紐約', description: '經典紐約街景。', facilities: ['特效片場', '芝麻街'], dining: ['路易披薩'], shopping: ['大鳥百貨'], strategy: '最後一站拍照。' }
+        ];
+
+        const STRATEGY = [
+            { time: "09:30", title: "抵達與暖身", content: "抵達聖淘沙名勝世界，先在門口地球儀拍照。檢查 App 設施運作狀況。" },
+            { time: "10:00", title: "第一站：小小兵樂園 (入園左轉)", content: "一開門直接往左衝！先玩【神偷奶爸：小小兵鬧翻天】。這是最新設施，人潮累積最快。" },
+            { time: "11:00", title: "第二站：古埃及 (逆時針移動)", content: "繼續往左順路到古埃及，寄物後玩【木乃伊復仇記】。此時排隊約 30 分內。" },
+            { time: "12:00", title: "中場調整：科幻城市/午餐", content: "前往【科幻城市】。若【變形金剛】排隊 < 50 分則先玩，否則先去馬來西亞美食街或園內餐廳避開 12:30 尖峰。" },
+            { time: "14:00", title: "第三站：失落的世界 (水世界)", content: "下午 1-2 點通常有水世界表演（請確認時刻表）。看完後玩【侏羅紀河流探險】（已開放），剛好濕身消暑。" },
+            { time: "16:00", title: "第四站：遙遠王國 (休息)", content: "到遙遠王國玩【鞋貓劍客】，累了就進【史瑞克 4D】看電影吹冷氣。" },
+            { time: "17:30", title: "第五站：補漏與購物", content: "查看 App，若變形金剛時間縮短則去補玩。最後回到好萊塢、紐約區拍照、買紀念品。" },
+            { time: "19:30", title: "閉園與晚餐", content: "離開園區，前往 Vivocity 怡豐城吃晚餐（推薦松發肉骨茶或海鮮）。" }
+        ];
+
+        // --- Render Functions ---
+
+        function renderAttractions(filterZone = 'all') {
+            const grid = document.getElementById('attractions-grid');
+            grid.innerHTML = '';
+            
+            const filtered = filterZone === 'all' ? ALL_ATTRACTIONS : ALL_ATTRACTIONS.filter(a => a.zone === filterZone);
+
+            filtered.forEach(item => {
+                const stars = Array(item.thrillLevel).fill('<i data-lucide="star" class="w-3 h-3 fill-yellow-400 text-yellow-400 inline-block"></i>').join('');
+                const maintenanceOverlay = !item.isOpen ? `<div class="absolute inset-0 z-20 bg-gray-900/50 flex items-center justify-center pointer-events-none"><span class="bg-red-600 text-white px-4 py-2 rounded-md font-bold transform -rotate-12 border-2 border-white">維修中</span></div>` : '';
+                const grayScale = !item.isOpen ? 'grayscale opacity-70' : '';
+                
+                // Image handling: Use custom URL if exists, else placeholder
+                const imgUrl = item.image || `https://placehold.co/600x400/e2e8f0/1e293b?text=${encodeURIComponent(item.name)}`;
+                
+                // Map & Image URLs
+                const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent("Universal Studios Singapore " + item.name)}&t=&z=17&ie=UTF8&iwloc=&output=embed`;
+                const imgSearchUrl = `https://www.google.com/search?tbm=isch&q=Universal+Studios+Singapore+${encodeURIComponent(item.name)}&igu=1`;
+
+                const cardHtml = `
+                    <div class="group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 flex flex-col h-full ${grayScale}">
+                        ${maintenanceOverlay}
+                        <div class="h-40 bg-gray-200 relative overflow-hidden">
+                            <img src="${imgUrl}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400?text=No+Image'">
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                                <span class="text-white text-xs font-bold bg-indigo-600 px-2 py-0.5 rounded shadow">${item.zone}</span>
+                            </div>
+                        </div>
+                        <div class="p-5 flex-grow flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition">${item.name}</h3>
+                                <div class="flex flex-shrink-0 ml-2 space-x-0.5">${stars}</div>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">${item.description}</p>
+                            <div class="grid grid-cols-2 gap-2 mt-auto">
+                                <button onclick="openModal('${mapUrl}', '地圖：${item.name}')" class="flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-xs font-bold transition">
+                                    <i data-lucide="map" class="w-3 h-3 mr-1"></i> 地圖
+                                </button>
+                                <button onclick="openModal('${imgSearchUrl}', '圖片：${item.name}')" class="flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 text-xs font-bold transition">
+                                    <i data-lucide="camera" class="w-3 h-3 mr-1"></i> 圖片
+                                </button>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="text-xs text-yellow-800 font-medium flex items-start">
+                                    <i data-lucide="info" class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0"></i> ${item.tips}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+            lucide.createIcons();
+        }
+
+        function renderZones() {
+            const grid = document.getElementById('zones-grid');
+            ZONES.forEach(zone => {
+                const facHTML = zone.facilities.map(f => `<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full">${f}</span>`).join('');
+                const diningHTML = zone.dining.map(d => `<li class="truncate">${d}</li>`).join('');
+                const shopHTML = zone.shopping.map(s => `<li class="truncate">${s}</li>`).join('');
+                
+                const html = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+                        <h3 class="text-xl font-bold text-indigo-800 mb-2">${zone.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${zone.description}</p>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="star" class="w-3 h-3 mr-1"></i> 熱門設施</span>
+                                <div class="flex flex-wrap gap-2">${facHTML}</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="coffee" class="w-3 h-3 mr-1"></i> 餐飲</span>
+                                    <ul class="text-xs text-gray-600 list-disc list-inside">${diningHTML}</ul>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="shopping-bag" class="w-3 h-3 mr-1"></i> 購物</span>
+                                    <ul class="text-xs text-gray-600 list-disc list-inside">${shopHTML}</ul>
+                                </div>
+                            </div>
+                            <div class="mt-3 bg-yellow-50 p-2 rounded text-xs text-yellow-800 flex items-start">
+                                <i data-lucide="navigation" class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0"></i> ${zone.strategy}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderStrategy() {
+            const container = document.getElementById('strategy-timeline');
+            STRATEGY.forEach((slot, index) => {
+                const html = `
+                    <div class="relative pl-8">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-sm"></div>
+                        <span class="text-sm font-bold text-indigo-500 mb-1 block">${slot.time}</span>
+                        <h4 class="text-lg font-bold text-gray-800">${slot.title}</h4>
+                        <p class="text-gray-600 text-sm mt-1">${slot.content}</p>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderFilters() {
+            const container = document.getElementById('zone-filters');
+            const zones = ['all', ...new Set(ALL_ATTRACTIONS.map(a => a.zone))];
+            
+            zones.forEach(z => {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 ${z === 'all' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100'}`;
+                btn.innerText = z === 'all' ? '全部顯示' : z;
+                btn.onclick = () => {
+                    // Update active state
+                    Array.from(container.children).forEach(c => {
+                        c.className = 'px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 bg-white text-gray-600 hover:bg-gray-100';
+                    });
+                    btn.className = 'px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 bg-indigo-600 text-white shadow-md';
+                    renderAttractions(z);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // --- Interaction Functions ---
+
+        function switchTab(tabId) {
+            const guideContent = document.getElementById('tab-guide');
+            const gameContent = document.getElementById('tab-game');
+            const btnGuide = document.getElementById('btn-guide');
+            const btnGame = document.getElementById('btn-game');
+
+            if (tabId === 'guide') {
+                guideContent.classList.remove('hidden');
+                gameContent.classList.add('hidden');
+                btnGuide.classList.replace('text-gray-500', 'text-indigo-600');
+                btnGuide.classList.replace('hover:text-gray-900', 'bg-indigo-50');
+                btnGame.classList.replace('text-yellow-600', 'text-gray-500');
+                btnGame.classList.replace('bg-yellow-50', 'hover:text-gray-900');
+            } else {
+                guideContent.classList.add('hidden');
+                gameContent.classList.remove('hidden');
+                btnGuide.classList.replace('text-indigo-600', 'text-gray-500');
+                btnGuide.classList.replace('bg-indigo-50', 'hover:text-gray-900');
+                btnGame.classList.replace('text-gray-500', 'text-yellow-600');
+                btnGame.classList.replace('hover:text-gray-900', 'bg-yellow-50');
+            }
+        }
+
+        function openModal(url, title) {
+            const modal = document.getElementById('info-modal');
+            const iframe = document.getElementById('modal-iframe');
+            const titleEl = document.getElementById('modal-title');
+            const linkEl = document.getElementById('modal-new-window');
+            const content = document.getElementById('modal-content');
+
+            iframe.src = url;
+            titleEl.innerText = title;
+            // Clean URL for external opening if it's an embed link
+            const cleanUrl = url.replace('&output=embed', '');
+            linkEl.href = cleanUrl;
+
+            modal.classList.remove('hidden');
+            // Animation class
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('info-modal');
+            const iframe = document.getElementById('modal-iframe');
+            const content = document.getElementById('modal-content');
+
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                iframe.src = ''; // Stop video/loading
+            }, 200);
+        }
+
+        // --- Game Logic ---
+        let gameAnimationFrame;
+        let isGameRunning = false;
+        let score = 0;
+        let speed = 5;
+
+        function startGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Reset state
+            isGameRunning = true;
+            score = 0;
+            speed = 5;
+            document.getElementById('game-start-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('game-hud').classList.remove('hidden');
+            document.getElementById('current-score').innerText = 0;
+
+            let playerX = canvas.width / 2;
+            const playerWidth = 30;
+            const playerHeight = 50;
+            let obstacles = [];
+            let frameCount = 0;
+
+            // Input handlers
+            function handleKeyDown(e) {
+                if (e.key === 'ArrowLeft') playerX -= 20;
+                if (e.key === 'ArrowRight') playerX += 20;
+                if (playerX < 0) playerX = 0;
+                if (playerX > canvas.width - playerWidth) playerX = canvas.width - playerWidth;
+            }
+            
+            // Touch handlers
+            function handleTouch(e) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touchX = e.touches[0].clientX - rect.left;
+                playerX = touchX - playerWidth / 2;
+                if (playerX < 0) playerX = 0;
+                if (playerX > canvas.width - playerWidth) playerX = canvas.width - playerWidth;
+            }
+
+            window.addEventListener('keydown', handleKeyDown);
+            canvas.addEventListener('touchmove', handleTouch, { passive: false });
+
+            function loop() {
+                if (!isGameRunning) return;
+
+                frameCount++;
+                ctx.fillStyle = '#1e1b4b'; // Dark blue bg
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Track
+                ctx.strokeStyle = '#312e81';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width * 0.3, 0);
+                ctx.lineTo(canvas.width * 0.3, canvas.height);
+                ctx.moveTo(canvas.width * 0.7, 0);
+                ctx.lineTo(canvas.width * 0.7, canvas.height);
+                ctx.stroke();
+
+                // Spawn logic
+                if (frameCount % (60 - Math.min(50, Math.floor(score / 50))) === 0) {
+                    const type = Math.random() > 0.8 ? 2 : (Math.random() > 0.5 ? 1 : 0); // 0=mummy, 1=repair, 2=coin
+                    const w = 40;
+                    const h = 40;
+                    const x = Math.random() * (canvas.width - w);
+                    obstacles.push({ x, y: -50, type, w, h });
+                }
+
+                // Update & Draw Obstacles
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    const obs = obstacles[i];
+                    obs.y += speed + (score / 100);
+
+                    // Draw
+                    if (obs.type === 2) { // Coin
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.beginPath();
+                        ctx.arc(obs.x + obs.w/2, obs.y + obs.h/2, 15, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#000';
+                        ctx.font = '20px Arial';
+                        ctx.fillText('🍌', obs.x + 5, obs.y + 28);
+                    } else if (obs.type === 1) { // Repair
+                        ctx.fillStyle = '#ef4444';
+                        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '10px Arial';
+                        ctx.fillText('維修', obs.x + 5, obs.y + 25);
+                    } else { // Mummy
+                        ctx.fillStyle = '#a8a29e';
+                        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+                        ctx.fillStyle = '#000';
+                        ctx.fillText('🧟', obs.x + 8, obs.y + 28);
+                    }
+
+                    // Collision
+                    if (
+                        playerX < obs.x + obs.w &&
+                        playerX + playerWidth > obs.x &&
+                        canvas.height - 80 < obs.y + obs.h &&
+                        canvas.height - 80 + playerHeight > obs.y
+                    ) {
+                        if (obs.type === 2) {
+                            score += 10;
+                            obstacles.splice(i, 1);
+                            document.getElementById('current-score').innerText = score;
+                        } else {
+                            gameOver();
+                            return;
+                        }
+                    }
+
+                    // Cleanup
+                    if (obs.y > canvas.height) {
+                        obstacles.splice(i, 1);
+                        if (obs.type !== 2) {
+                            score++;
+                            document.getElementById('current-score').innerText = score;
+                        }
+                    }
+                }
+
+                // Draw Player
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(playerX, canvas.height - 80, playerWidth, playerHeight);
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(playerX - 5, canvas.height - 40, 5, 0, Math.PI * 2);
+                ctx.arc(playerX + playerWidth + 5, canvas.height - 40, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                gameAnimationFrame = requestAnimationFrame(loop);
+            }
+
+            function gameOver() {
+                isGameRunning = false;
+                window.removeEventListener('keydown', handleKeyDown);
+                canvas.removeEventListener('touchmove', handleTouch);
+                cancelAnimationFrame(gameAnimationFrame);
+                
+                document.getElementById('final-score').innerText = score;
+                document.getElementById('game-over-screen').classList.remove('hidden');
+                document.getElementById('game-hud').classList.add('hidden');
+            }
+
+            loop();
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAttractions();
+            renderZones();
+            renderStrategy();
+            renderFilters();
+            lucide.createIcons();
+        });
+
+    </script>
+</body>
+</html>
