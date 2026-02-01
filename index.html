@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USS 新加坡環球影城攻略 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* 背景設定 */
+        body {
+            background-color: #fefce8;
+            background-image: 
+                radial-gradient(#3b82f6 0.5px, transparent 0.5px), 
+                radial-gradient(#3b82f6 0.5px, #fefce8 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* 滑鼠游標為剝皮香蕉 SVG */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text y="30" font-size="30">🍌</text></svg>') 20 20, auto;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 300ms, transform 300ms; }
+        .modal-exit { opacity: 0; transform: scale(0.95); transition: opacity 200ms, transform 200ms; }
+
+        /* --- 遊戲模式時隱藏寵物 --- */
+        body.game-mode .minion-follower {
+            display: none !important;
+        }
+
+        /* --- 遊戲進行中隱藏滑鼠 --- */
+        canvas.playing {
+            cursor: none;
+        }
+
+        /* --- 地圖縮放游標樣式 --- */
+        .cursor-zoom-in { cursor: zoom-in; }
+        .cursor-zoom-out { cursor: zoom-out; }
+        
+        /* 地圖放大動畫 */
+        #modal-image {
+            transition: transform 0.3s ease;
+        }
+        #modal-image.zoomed {
+            transform: scale(2.5); /* 放大倍率 */
+        }
+
+        /* --- 小小兵游標寵物 CSS --- */
+        .minion-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FACC15;
+            pointer-events: none;
+            z-index: 2147483647;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+            will-change: transform;
+            border: 2px solid #EAB308;
+            display: block; 
+            overflow: visible;
+        }
+
+        /* 經典吊帶褲 (無褲管版) */
+        .minion-pants {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background-color: #1E40AF;
+            border-radius: 0 0 16px 16px;
+            z-index: 2;
+            border-top: 2px solid #1e3a8a;
+        }
+        
+        .minion-pants::before, .minion-pants::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 6px;
+            height: 14px;
+            background-color: #1E40AF;
+            border: 1px solid #1e3a8a;
+        }
+        .minion-pants::before { left: 4px; transform: rotate(-10deg); }
+        .minion-pants::after { right: 4px; transform: rotate(10deg); }
+
+        .minion-pocket {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 10px;
+            border: 1px solid #1e3a8a;
+            border-radius: 2px 2px 4px 4px;
+            background-color: #1d4ed8;
+            z-index: 3;
+        }
+        .minion-pocket::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: 4px;
+            height: 4px;
+            background-color: #111827;
+            transform: rotate(45deg);
+        }
+
+        .minion-strap {
+            position: absolute;
+            top: 16px;
+            left: -2px;
+            width: 105%;
+            height: 6px;
+            background-color: #374151;
+            border-radius: 2px;
+            z-index: 2;
+        }
+
+        .minion-mouth {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom: 2px solid #374151;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .minion-legs {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 1;
+        }
+
+        .minion-leg {
+            width: 8px;
+            height: 8px;
+            background-color: #FACC15;
+            border-radius: 4px;
+            position: relative;
+            transform-origin: top center;
+        }
+
+        .minion-leg::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: -2px;
+            width: 12px;
+            height: 6px;
+            background-color: #1F2937;
+            border-radius: 3px;
+        }
+
+        /* 角色特徵設定 */
+        .minion-kevin { width: 32px; height: 60px; border-radius: 16px; }
+        .minion-kevin .minion-pants { height: 22px; }
+        .minion-kevin .minion-strap { top: 18px; }
+        .minion-kevin .minion-hair { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 2px; height: 12px; background-color: #374151; }
+        .minion-kevin .minion-hair::before, .minion-kevin .minion-hair::after { content: ''; position: absolute; bottom: 0; width: 2px; height: 8px; background-color: #374151; }
+        .minion-kevin .minion-hair::before { transform: rotate(-20deg); left: -4px; }
+        .minion-kevin .minion-hair::after { transform: rotate(20deg); left: 4px; }
+        .minion-kevin .eye-left, .minion-kevin .eye-right { position: absolute; top: 12px; width: 14px; height: 14px; background: white; border-radius: 50%; border: 2px solid #9CA3AF; z-index: 4; }
+        .minion-kevin .eye-left { left: 1px; } .minion-kevin .eye-right { right: 1px; }
+        .minion-kevin .pupil { position: absolute; top: 4px; left: 4px; width: 4px; height: 4px; background: #3e2723; border-radius: 50%; }
+        .minion-kevin .minion-mouth { bottom: 24px; width: 14px; height: 4px; }
+
+        .minion-stuart { width: 36px; height: 50px; border-radius: 18px; }
+        .minion-stuart .minion-pants { height: 20px; }
+        .minion-stuart .minion-strap { top: 14px; }
+        .minion-stuart .minion-hair { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 30px; height: 6px; border-top: 2px solid #374151; border-radius: 50% 50% 0 0; }
+        .minion-stuart .eye-center { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 22px; height: 22px; background: white; border-radius: 50%; border: 4px solid #9CA3AF; z-index: 4; }
+        .minion-stuart .pupil { position: absolute; top: 6px; left: 6px; width: 6px; height: 6px; background: #3e2723; border-radius: 50%; }
+        .minion-stuart .minion-mouth { bottom: 22px; width: 12px; height: 4px; }
+
+        .minion-bob { width: 38px; height: 42px; border-radius: 19px; }
+        .minion-bob .minion-pants { height: 18px; }
+        .minion-bob .minion-strap { top: 12px; }
+        .minion-bob .eye-left, .minion-bob .eye-right { position: absolute; top: 7px; width: 16px; height: 16px; background: white; border-radius: 50%; border: 2px solid #9CA3AF; z-index: 4; }
+        .minion-bob .eye-left { left: 2px; } .minion-bob .eye-right { right: 2px; }
+        .minion-bob .pupil-left { position: absolute; top: 5px; left: 5px; width: 4px; height: 4px; background: #5D4037; border-radius: 50%; }
+        .minion-bob .pupil-right { position: absolute; top: 5px; left: 5px; width: 4px; height: 4px; background: #4CAF50; border-radius: 50%; }
+        .minion-bob .minion-mouth { bottom: 19px; width: 10px; height: 3px; }
+    </style>
+</head>
+<body class="text-gray-800 selection:bg-yellow-200">
+
+    <!-- Navbar -->
+    <nav class="bg-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <span class="font-bold text-xl text-indigo-700 flex items-center">
+                    <span class="bg-indigo-600 text-white p-1 rounded mr-2">USS</span>
+                    Guide 2026
+                </span>
+                <div class="flex space-x-4">
+                    <button onclick="switchTab('guide')" id="btn-guide" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-600 bg-indigo-50 transition">
+                        攻略指南
+                    </button>
+                    <button onclick="switchTab('game')" id="btn-game" class="px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 transition">
+                        模擬遊戲
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="pb-20 relative">
+        
+        <!-- GUIDE TAB -->
+        <div id="tab-guide">
+            <div class="relative h-96 bg-gradient-to-r from-yellow-400 to-blue-600 text-white overflow-hidden shadow-xl">
+                <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1597466599360-3b9775841aec?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/80"></div>
+                <div class="relative z-10 max-w-6xl mx-auto px-4 h-full flex flex-col justify-center items-start">
+                    <div class="bg-yellow-300 text-black font-bold px-3 py-1 rounded-full text-sm mb-4 inline-block animate-bounce shadow-md">
+                        2026 全新攻略版 🍌
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight drop-shadow-md">
+                        USS 新加坡環球影城<br/>
+                        <span class="text-yellow-300">極限一日遊指南</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-100 max-w-2xl drop-shadow">
+                        無快速通關・最新小小兵樂園・2026/02/11 實戰計畫
+                    </p>
+                    <div class="mt-8 flex gap-4">
+                        <a href="#full-guide" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-3 px-6 rounded-lg transition shadow-lg flex items-center border-2 border-yellow-200">
+                            <i data-lucide="map" class="w-5 h-5 mr-2"></i> 全園區攻略
+                        </a>
+                        <a href="#attractions-list" class="bg-blue-600/80 hover:bg-blue-500/80 backdrop-blur-sm border border-blue-400 text-white font-bold py-3 px-6 rounded-lg transition flex items-center">
+                            <i data-lucide="camera" class="w-5 h-5 mr-2"></i> 設施圖鑑
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="max-w-6xl mx-auto px-4 -mt-10 relative z-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Time -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="clock" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">營業時間 (2/11)</h3>
+                    </div>
+                    <p class="text-2xl font-bold text-indigo-900">10:00 - 20:00</p>
+                    <p class="text-sm mt-2 text-gray-500">建議抵達時間：<span class="text-red-500 font-bold">09:30</span></p>
+                    <p class="text-xs text-gray-400 mt-1">*時間可能變動，請下載 App 確認</p>
+                </div>
+
+                <!-- Ticket -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="ticket" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">購票優惠</h3>
+                    </div>
+                    <p class="mb-3 text-sm text-gray-600">現場購票較貴，強烈建議預先購買電子票。</p>
+                    <div class="flex flex-col space-y-2">
+                        <a href="https://www.klook.com/zh-TW/activity/117-universal-studios-singapore-ticket/" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded text-sm font-bold flex items-center justify-center transition">
+                            Klook 購票 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                        </a>
+                        <a href="https://www.kkday.com/zh-tw/product/2312" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-sm font-bold flex items-center justify-center transition">
+                            KKday 購票 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- App -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+                    <div class="flex items-center mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg mr-3"><i data-lucide="smartphone" class="w-6 h-6 text-indigo-600"></i></div>
+                        <h3 class="font-bold text-lg text-gray-800">下載官方 App</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex flex-col items-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/sg/app/universal-studios-singapore/id1462742095" alt="iOS QR" class="w-16 h-16 mb-2 mix-blend-multiply">
+                            <a href="https://apps.apple.com/sg/app/universal-studios-singapore/id1462742095" target="_blank" class="text-xs font-bold text-gray-700 hover:text-indigo-600 underline">App Store</a>
+                        </div>
+                        <div class="flex flex-col items-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.rwsentosa.UniversalSG" alt="Android QR" class="w-16 h-16 mb-2 mix-blend-multiply">
+                            <a href="https://play.google.com/store/apps/details?id=com.rwsentosa.UniversalSG" target="_blank" class="text-xs font-bold text-gray-700 hover:text-indigo-600 underline">Google Play</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Alert -->
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 my-6 rounded-r-lg shadow-sm mx-4 max-w-6xl md:mx-auto">
+                <div class="flex items-start">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-500 mr-3 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h4 class="font-bold text-red-800 text-lg">設施維修警報 (2026/02/11)</h4>
+                        <p class="text-red-700 mt-1">
+                            根據資料，<strong>「太空堡壘卡拉狄加 (雙軌過山車)」</strong> 預計於 1/28 至 2/14 進行年度維修。
+                            <br/>
+                            <span class="text-sm mt-1 block">
+                                * 侏羅紀河流探險：維修至 2/8，您 2/11 前往時已經<strong>正常開放</strong>。
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attractions Gallery Section -->
+            <div id="attractions-list" class="max-w-6xl mx-auto px-4 mt-12 scroll-mt-24">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 border-l-4 border-yellow-400 pl-4">
+                        全園區設施圖鑑
+                    </h2>
+                    <!-- Filter Buttons -->
+                    <div id="zone-filters" class="mt-4 md:mt-0 flex overflow-x-auto pb-2 md:pb-0 space-x-2 no-scrollbar">
+                        <!-- JS will populate buttons -->
+                    </div>
+                </div>
+                
+                <!-- Cards Grid -->
+                <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS will populate cards -->
+                </div>
+            </div>
+
+            <!-- Full Zone Guide Section -->
+            <div id="full-guide" class="max-w-6xl mx-auto px-4 mt-16 bg-white/90 backdrop-blur rounded-2xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-indigo-900 flex items-center">
+                            <i data-lucide="map" class="w-8 h-8 mr-3 text-indigo-600"></i>
+                            七大園區地圖 & 動線攻略
+                        </h2>
+                        <p class="text-indigo-600 mt-2">
+                            建議入園後採 <span class="font-bold bg-white px-2 py-1 rounded">順時針 (由左往右)</span> 方向遊玩，先避開早上的好萊塢購物人潮。
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-sm bg-white px-4 py-2 rounded-full shadow text-indigo-700 font-bold border border-indigo-100">
+                        路線：入口 → 小小兵 → 遙遠王國 → 失落世界 → 古埃及 → 科幻城市 → 紐約 → 好萊塢
+                    </div>
+                </div>
+
+                <!-- Park Map Component -->
+                <div class="w-full bg-gray-100 rounded-xl overflow-hidden shadow-lg border border-gray-200 relative group mb-10">
+                    <div class="absolute top-4 left-4 z-10 bg-white/95 p-3 rounded-lg shadow-lg border border-gray-200 backdrop-blur-md cursor-pointer hover:bg-white transition"
+                         onclick="openModal('uss-park-map-3840x2160-ch-v0.jpg', '新加坡環球影城官方地圖 (點擊查看原圖)')">
+                        <h4 class="font-bold text-indigo-800 flex items-center text-sm mb-1">
+                            <i data-lucide="image" class="w-4 h-4 mr-2"></i> 園區地圖
+                        </h4>
+                        <span class="text-xs text-gray-500 block">USS Official Map View</span>
+                        <span class="text-xs text-indigo-600 block underline mt-1">點擊查看官方地圖 (原圖)</span>
+                    </div>
+                    
+                    <!-- Fallback SVG Map -->
+                    <div id="fallback-map" class="hidden w-full h-auto aspect-video bg-blue-50 flex items-center justify-center">
+                        <svg viewBox="0 0 800 600" class="w-full h-full" style="max-height:600px;">
+                            <rect width="800" height="600" fill="#f0f9ff"/>
+                            <path d="M 300 250 Q 400 200 500 250 Q 550 350 400 400 Q 250 350 300 250 Z" fill="#93C5FD" stroke="#3B82F6" stroke-width="2" />
+                            <text x="400" y="300" text-anchor="middle" font-size="20" fill="#1e40af">SVG 地圖預覽 (請確認圖片檔案存在)</text>
+                        </svg>
+                    </div>
+
+                    <!-- Image Map (AI Map as background) -->
+                    <img 
+                        id="park-map-img"
+                        src="uss-park-map-3840x2160-ch-v1.jpg" 
+                        alt="新加坡環球影城園區地圖" 
+                        class="w-full h-auto object-cover"
+                        onerror="document.getElementById('park-map-img').style.display='none'; document.getElementById('fallback-map').classList.remove('hidden');"
+                    />
+                    
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        提示：請確認 'uss-park-map-3840x2160-ch-v1.jpg' (AI圖) 與 'uss-park-map-3840x2160-ch-v0.jpg' (官方圖) 位於相同資料夾中
+                    </div>
+                </div>
+
+                <!-- Zone Cards Grid -->
+                <div id="zones-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JS will populate -->
+                </div>
+            </div>
+
+            <!-- Strategy Section -->
+            <div id="strategy" class="max-w-6xl mx-auto px-4 mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i data-lucide="clock" class="w-6 h-6 mr-2 text-indigo-600"></i> 
+                            2/11 (週三) 無快通戰鬥行程表
+                        </h3>
+                        <div class="relative border-l-2 border-indigo-200 ml-3 space-y-8" id="strategy-timeline">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <!-- Food -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-orange-600">
+                            <i data-lucide="coffee" class="mr-2"></i> 美食推薦
+                        </h3>
+                        <ul class="space-y-4">
+                            <li class="border-b pb-2">
+                                <span class="font-bold block text-gray-800">馬來西亞美食街 (園外)</span>
+                                <span class="text-sm text-gray-500">入口旁，CP 值最高。推薦：肉骨茶、炒粿條。</span>
+                            </li>
+                            <li class="border-b pb-2">
+                                <span class="font-bold block text-gray-800">Goldilocks (遙遠王國)</span>
+                                <span class="text-sm text-gray-500">炸雞套餐，園區內相對平價且好吃的選擇。</span>
+                            </li>
+                            <li class="pb-2">
+                                <span class="font-bold block text-gray-800">小小兵咖啡廳 (Minion Land)</span>
+                                <span class="text-sm text-gray-500">打卡必備！小小兵造型甜點與漢堡。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Souvenir -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-pink-600">
+                            <i data-lucide="shopping-bag" class="mr-2"></i> 必買紀念品
+                        </h3>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>小小兵爆米花桶 (最新造型)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>Tim Bear (Bob 的泰迪熊)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>變形金剛水壺 (實用派)</li>
+                            <li class="flex items-start"><span class="text-pink-500 mr-2">●</span>芝麻街髮箍 (拍照必備)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 mt-16 mb-8 text-center text-gray-600 text-sm font-medium">
+                <p>Designed by AI Guide | 資料來源：Mimi韓、Klook、2A夫妻</p>
+                <p class="mt-2">祝您 2026/02/11 旅途愉快！</p>
+            </div>
+        </div>
+
+        <!-- GAME TAB (Enhanced Version) -->
+        <div id="tab-game" class="hidden">
+            <div class="max-w-4xl mx-auto px-4 mt-10 flex flex-col items-center">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">小小兵跑酷大冒險</h2>
+                <p class="mb-8 text-gray-600 max-w-lg text-center">
+                    目標：60秒內獲得1000分！<br/>
+                    操作：使用 <strong>← 左</strong> 與 <strong>→ 右</strong> 鍵閃避。<br/>
+                    規則：🍌香蕉+30分 | 🚧路障-10分 | 🧟木乃伊-1條命
+                </p>
+                
+                <!-- Canvas Game Container -->
+                <div class="bg-gray-900 rounded-xl p-4 text-white text-center shadow-2xl border-4 border-yellow-400">
+                    <div class="relative mx-auto w-full max-w-[400px] h-[500px] bg-indigo-950 rounded-lg overflow-hidden border-2 border-indigo-700">
+                        <canvas id="gameCanvas" width="400" height="500" class="block mx-auto"></canvas>
+                        
+                        <!-- Start Screen -->
+                        <div id="game-start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-black/70 z-50">
+                            <h3 class="text-2xl font-bold text-yellow-400 mb-4 animate-bounce">準備好了嗎？</h3>
+                            <button onclick="startGame()" class="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full transform transition hover:scale-105 shadow-lg">
+                                開始挑戰 (開啟音效)
+                            </button>
+                        </div>
+
+                        <!-- Game Over Screen -->
+                        <div id="game-over-screen" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-50">
+                            <h4 id="end-title" class="text-3xl font-bold text-red-500 mb-2">GAME OVER</h4>
+                            <p class="text-white text-lg mb-2">最終得分: <span id="final-score" class="text-yellow-400 font-bold">0</span></p>
+                            <p id="end-reason" class="text-gray-400 text-sm mb-6">時間到！</p>
+                            <div class="flex space-x-4">
+                                <button onclick="startGame()" class="bg-white text-black font-bold py-2 px-6 rounded-full hover:bg-gray-200">
+                                    重來
+                                </button>
+                                <button onclick="switchTab('guide')" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-full hover:bg-gray-500">
+                                    離開
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- HUD -->
+                        <div id="game-hud" class="hidden absolute top-0 left-0 w-full p-2 flex justify-between items-start z-40 bg-gradient-to-b from-black/50 to-transparent">
+                            <div class="text-left">
+                                <div class="text-yellow-400 font-bold text-lg">SCORE: <span id="hud-score">0</span></div>
+                                <div class="text-white text-sm">LIFE: <span id="hud-lives">❤️❤️❤️</span></div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-mono text-xl border-2 border-white rounded px-2"><span id="hud-time">60</span>s</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Floating Info Modal -->
+    <div id="info-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white w-full h-[85vh] max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col relative transform transition-all duration-300 scale-95" id="modal-content">
+            <!-- Header -->
+            <div class="flex justify-between items-center p-3 px-4 border-b bg-gray-50">
+                <div class="flex items-center">
+                    <span id="modal-title" class="font-bold text-gray-700">資訊預覽</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a id="modal-new-window" href="#" target="_blank" class="px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-md text-sm font-bold flex items-center transition">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-1"></i> 開啟新視窗
+                    </a>
+                    <button onclick="closeModal()" class="p-1.5 hover:bg-gray-200 rounded-full text-gray-500 transition">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Content -->
+            <div class="flex-grow bg-gray-100 relative overflow-auto" id="modal-body">
+                <!-- Iframe for external links -->
+                <iframe id="modal-iframe" src="" class="w-full h-full border-0" allow="geolocation" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+                
+                <!-- Image container for map (Hidden by default) -->
+                <div id="modal-image-container" class="hidden w-full h-full overflow-auto flex justify-center items-center cursor-zoom-in bg-gray-100">
+                    <img id="modal-image" class="max-w-full max-h-full transition-transform duration-300 origin-center object-contain" src="" alt="Map">
+                </div>
+
+                <!-- Loading Hint -->
+                <div id="modal-loading" class="absolute inset-0 flex flex-col items-center justify-center -z-10">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
+                    <p class="text-gray-500 text-sm">正在載入資訊...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back To Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+            class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 transition-all z-50 hidden opacity-0 translate-y-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+    </button>
+
+    <!-- Scripts -->
+    <script>
+        // --- Sound Manager (Web Audio API) ---
+        const SoundManager = {
+            ctx: null,
+            init: function() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playTone: function(freq, type, duration, vol=0.1) {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+            playCoin: function() { // Banana
+                this.playTone(880, 'sine', 0.1, 0.1); 
+                setTimeout(() => this.playTone(1760, 'sine', 0.2, 0.1), 50);
+            },
+            playHit: function() { // Sign (Damage)
+                this.playTone(150, 'sawtooth', 0.3, 0.1);
+            },
+            playDie: function() { // Mummy (Life lost)
+                this.playTone(400, 'square', 0.1, 0.2);
+                setTimeout(() => this.playTone(300, 'square', 0.1, 0.2), 100);
+                setTimeout(() => this.playTone(200, 'square', 0.3, 0.2), 200);
+            },
+            playWin: function() {
+                [523, 659, 783, 1046, 783, 1046].forEach((f, i) => setTimeout(() => this.playTone(f, 'square', 0.2, 0.1), i * 150));
+            },
+            playLose: function() {
+                [400, 350, 300, 250].forEach((f, i) => setTimeout(() => this.playTone(f, 'sawtooth', 0.4, 0.15), i * 300));
+            }
+        };
+
+        // --- Data & Helper Functions ---
+        const ALL_ATTRACTIONS = [
+            { id: 'minion-mayhem', name: '神偷奶爸：小小兵鬧翻天', zone: '小小兵樂園', thrillLevel: 3, description: '進入格魯的實驗室，體驗沉浸式 3D 動感乘車遊。', tips: '入園首選！最新設施排隊最久。', isOpen: true, type: 'ride', image: 'minion_mayhem.jpg' },
+            { id: 'buggie-boogie', name: '小蟲萌萌轉', zone: '小小兵樂園', thrillLevel: 2, description: '小小兵主題的旋轉舞會，適合親子同樂。', tips: '造型非常可愛，適合拍照。', isOpen: true, type: 'ride', image: 'buggie_boogie.jpg' },
+            { id: 'silly-swirl', name: '萌樂漩渦', zone: '小小兵樂園', thrillLevel: 2, description: '色彩繽紛的旋轉遊樂設施。', tips: '排隊時間通常較短。', isOpen: true, type: 'ride', image: 'silly_swirl.jpg' },
+            { id: 'puss', name: '鞋貓劍客歷險記', zone: '遙遠王國', thrillLevel: 3, description: '懸吊式過山車，跟著鞋貓尋找金蛋。', tips: '雖然是家庭過山車，但有些微離心力，很好玩。', isOpen: true, type: 'ride', image: 'puss_in_boots.jpg' },
+            { id: 'shrek', name: '史瑞克 4D 影院', zone: '遙遠王國', thrillLevel: 2, description: '跟隨史瑞克營救公主，感受視覺與觸覺特效。', tips: '冷氣很強，適合中午避暑。', isOpen: true, type: 'show', image: 'shrek_4d.jpg' },
+            { id: 'enchanted-airways', name: '小龍飛行學校', zone: '遙遠王國', thrillLevel: 3, description: '小型過山車，適合小朋友的入門挑戰。', tips: '排隊隊伍移動較慢。', isOpen: true, type: 'ride', image: 'enchanted_airways.jpg' },
+            { id: 'jurassic-rapids', name: '侏羅紀河流探險', zone: '失落的世界', thrillLevel: 4, description: '圓形漂流筏，最後從高處俯衝入水。', tips: '必濕！請自備雨衣。(2/11已開放)', isOpen: true, type: 'ride', image: 'jurassic_rapids.jpg' },
+            { id: 'waterworld', name: '未來水世界 Show', zone: '失落的世界', thrillLevel: 5, description: '實景特技表演，爆破、跳水非常震撼。', tips: '全濕區(綠色椅子)真的會全濕。', isOpen: true, type: 'show', image: 'waterworld.jpg' },
+            { id: 'canopy-flyer', name: '天幕飛行', zone: '失落的世界', thrillLevel: 3, description: '懸掛式飛行車，俯瞰侏羅紀園區。', tips: '排隊效率低，若超過 40 分鐘建議跳過。', isOpen: true, type: 'ride', image: 'canopy_flyer.jpg' },
+            { id: 'dino-soarin', name: '恐龍騎士', zone: '失落的世界', thrillLevel: 2, description: '可以自行控制高低的旋轉恐龍。', tips: '適合幼童。', isOpen: true, type: 'ride', image: 'dino_soarin.jpg' },
+            { id: 'mummy', name: '木乃伊復仇記', zone: '古埃及', thrillLevel: 5, description: '室內高速過山車，黑暗中急轉與倒退。', tips: '極致刺激！需寄物。', isOpen: true, type: 'ride', image: 'revenge_of_the_mummy.jpg' },
+            { id: 'treasure-hunters', name: '尋寶奇兵', zone: '古埃及', thrillLevel: 1, description: '駕駛吉普車的悠閒軌道車。', tips: '速度非常慢，僅適合拍照或幼童。', isOpen: true, type: 'ride', image: 'treasure_hunters.jpg' },
+            { id: 'transformers', name: '變形金剛 3D 對決', zone: '科幻城市', thrillLevel: 4, description: '3D 沉浸式戰鬥，體驗高空墜落快感。', tips: '傍晚人潮較少。', isOpen: true, type: 'ride', image: 'transformers.jpg' },
+            { id: 'battlestar-human', name: '太空堡壘：人類戰隊', zone: '科幻城市', thrillLevel: 5, description: '坐式過山車，無倒轉但速度極快。', tips: '⚠️ 維修警報 (1/28-2/14)。', isOpen: false, type: 'ride', image: 'battlestar_human.jpg' },
+            { id: 'battlestar-cylon', name: '太空堡壘：機械戰隊', zone: '科幻城市', thrillLevel: 5, description: '懸掛式過山車，有多處翻轉與零重力。', tips: '⚠️ 維修警報 (1/28-2/14)。', isOpen: false, type: 'ride', image: 'battlestar_cylon.jpg' },
+            { id: 'accelerator', name: '旋轉飛盤', zone: '科幻城市', thrillLevel: 3, description: '科幻版的咖啡杯。', tips: '飯後不建議搭乘。', isOpen: true, type: 'ride', image: 'accelerator.jpg' },
+            { id: 'sesame-spaghetti', name: '芝麻街義大利麵太空戰', zone: '紐約', thrillLevel: 2, description: '室內懸掛慢速車，場景非常可愛。', tips: '冷氣很涼，適合休息拍照。', isOpen: true, type: 'ride', image: 'sesame_spaghetti.jpg' },
+            { id: 'lights-camera', name: '電影特效片場', zone: '紐約', thrillLevel: 2, description: '史蒂芬史匹柏主持，展示颶風特效。', tips: '第一排會被水潑到。', isOpen: true, type: 'show', image: 'lights_camera_action.jpg' },
+            { id: 'hollywood-meet', name: '好萊塢星光大道', zone: '好萊塢', thrillLevel: 1, description: '小小兵、功夫熊貓等角色見面會。', tips: '請參考 App 上的見面會時間表。', isOpen: true, type: 'meet', image: 'hollywood_meet.jpg' }
+        ];
+
+        const ZONES = [
+            { name: '1. 好萊塢', description: '入園第一站，購物與星光大道。', facilities: ['角色見面會', 'Hello Kitty'], dining: ['星巴克', '梅爾斯快餐'], shopping: ['禮品店', '小小兵專賣店'], strategy: '先衝設施，閉園前再來買。' },
+            { name: '2. 小小兵樂園', description: '2025 全新開幕！入園左手邊。', facilities: ['小小兵鬧翻天', '萌樂漩渦'], dining: ['小小兵咖啡廳'], shopping: ['小小兵市集'], strategy: '早上 10:00 直衝這裡！' },
+            { name: '3. 遙遠王國', description: '史瑞克的城堡童話氛圍。', facilities: ['史瑞克 4D', '鞋貓劍客'], dining: ['Goldilocks 炸雞'], shopping: ['神仙教母商店'], strategy: '適合中午吹冷氣。' },
+            { name: '4. 失落的世界', description: '侏羅紀公園與未來水世界。', facilities: ['河流探險', '水世界表演'], dining: ['東南亞美食'], shopping: ['侏羅紀專賣店'], strategy: '下午玩水消暑。' },
+            { name: '5. 古埃及', description: '神祕古文明與木乃伊。', facilities: ['木乃伊復仇記', '尋寶奇兵'], dining: ['綠洲香料館'], shopping: ['卡特寶庫'], strategy: '必玩木乃伊，需寄物。' },
+            { name: '6. 科幻城市', description: '未來感與最刺激設施。', facilities: ['變形金剛', '太空堡壘(修)'], dining: ['星際戰車'], shopping: ['變形金剛裝備庫'], strategy: '變形金剛傍晚人較少。' },
+            { name: '7. 紐約', description: '經典紐約街景。', facilities: ['特效片場', '芝麻街'], dining: ['路易披薩'], shopping: ['大鳥百貨'], strategy: '最後一站拍照。' }
+        ];
+        // Updated Strategy Order: Clockwise (Left to Right)
+        const STRATEGY = [
+            { time: "09:30", title: "抵達與暖身", content: "抵達聖淘沙名勝世界，先在門口地球儀拍照。檢查 App 設施運作狀況。" },
+            { time: "10:00", title: "第一站：小小兵樂園 (入園左轉)", content: "一開門直接往左衝！先玩【神偷奶爸：小小兵鬧翻天】。這是最新設施，人潮累積最快。" },
+            { time: "11:00", title: "第二站：遙遠王國 (順時針移動)", content: "順著動線前往遙遠王國，玩【鞋貓劍客歷險記】，午餐前可看【史瑞克 4D】避暑。" },
+            { time: "12:30", title: "第三站：失落的世界 (午餐/水世界)", content: "在此區享用東南亞美食。下午 1-2 點通常有【未來水世界】表演，看完接著玩【侏羅紀河流探險】（會濕身）。" },
+            { time: "14:30", title: "第四站：古埃及", content: "前往古埃及區，寄物後挑戰超刺激的【木乃伊復仇記】。若有時間可玩尋寶奇兵拍照。" },
+            { time: "16:00", title: "第五站：科幻城市", content: "進入科幻城市，主攻【變形金剛 3D 對決】（下午人潮通常較少）。若太空堡壘有試運轉也可嘗試。" },
+            { time: "17:30", title: "第六站：紐約", content: "前往紐約區，玩【芝麻街義大利麵太空戰】休息，並在紐約街頭場景拍照留念。" },
+            { time: "18:30", title: "第七站：好萊塢 (購物/閉園)", content: "最後回到好萊塢大道購買紀念品，結束完美的一天。離開園區後前往 Vivocity 吃晚餐。" },
+            { time: "19:30", title: "閉園與晚餐", content: "離開園區，前往 Vivocity 怡豐城吃晚餐（推薦松發肉骨茶或海鮮）。" }
+        ];
+
+        function renderAttractions(filterZone = 'all') { const grid = document.getElementById('attractions-grid'); if(!grid) return; grid.innerHTML = ''; const filtered = filterZone === 'all' ? ALL_ATTRACTIONS : ALL_ATTRACTIONS.filter(a => a.zone === filterZone); filtered.forEach(item => { const stars = Array(item.thrillLevel).fill('<i data-lucide="star" class="w-3 h-3 fill-yellow-400 text-yellow-400 inline-block"></i>').join(''); const maintenanceOverlay = !item.isOpen ? `<div class="absolute inset-0 z-20 bg-gray-900/50 flex items-center justify-center pointer-events-none"><span class="bg-red-600 text-white px-4 py-2 rounded-md font-bold transform -rotate-12 border-2 border-white">維修中</span></div>` : ''; const grayScale = !item.isOpen ? 'grayscale opacity-70' : ''; const imgUrl = item.image; const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent("Universal Studios Singapore " + item.name)}&t=&z=17&ie=UTF8&iwloc=&output=embed`; const imgSearchUrl = `https://www.google.com/search?tbm=isch&q=Universal+Studios+Singapore+${encodeURIComponent(item.name)}&igu=1`; const cardHtml = ` <div class="group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 flex flex-col h-full ${grayScale}"> ${maintenanceOverlay} <div class="h-40 bg-gray-200 relative overflow-hidden"> <img src="${imgUrl}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/600x400/e2e8f0/1e293b?text=${encodeURIComponent(item.name)}'"> <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3"> <span class="text-white text-xs font-bold bg-indigo-600 px-2 py-0.5 rounded shadow">${item.zone}</span> </div> </div> <div class="p-5 flex-grow flex flex-col"> <div class="flex justify-between items-start mb-2"> <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition">${item.name}</h3> <div class="flex flex-shrink-0 ml-2 space-x-0.5">${stars}</div> </div> <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">${item.description}</p> <div class="grid grid-cols-2 gap-2 mt-auto"> <button onclick="openModal('${mapUrl}', '地圖：${item.name}')" class="flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-xs font-bold transition"> <i data-lucide="map" class="w-3 h-3 mr-1"></i> 地圖 </button> <button onclick="openModal('${imgSearchUrl}', '圖片：${item.name}')" class="flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 text-xs font-bold transition"> <i data-lucide="camera" class="w-3 h-3 mr-1"></i> 圖片 </button> </div> <div class="mt-3 pt-3 border-t border-gray-100"> <p class="text-xs text-yellow-800 font-medium flex items-start"> <i data-lucide="info" class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0"></i> ${item.tips} </p> </div> </div> </div> `; grid.insertAdjacentHTML('beforeend', cardHtml); }); if (typeof lucide !== 'undefined') lucide.createIcons(); }
+        function renderZones() { const grid = document.getElementById('zones-grid'); if(!grid) return; ZONES.forEach(zone => { const facHTML = zone.facilities.map(f => `<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full">${f}</span>`).join(''); const diningHTML = zone.dining.map(d => `<li class="truncate">${d}</li>`).join(''); const shopHTML = zone.shopping.map(s => `<li class="truncate">${s}</li>`).join(''); const html = ` <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition"> <h3 class="text-xl font-bold text-indigo-800 mb-2">${zone.name}</h3> <p class="text-gray-600 text-sm mb-4">${zone.description}</p> <div class="space-y-3"> <div> <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="star" class="w-3 h-3 mr-1"></i> 熱門設施</span> <div class="flex flex-wrap gap-2">${facHTML}</div> </div> <div class="grid grid-cols-2 gap-2"> <div> <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="coffee" class="w-3 h-3 mr-1"></i> 餐飲</span> <ul class="text-xs text-gray-600 list-disc list-inside">${diningHTML}</ul> </div> <div> <span class="text-xs font-bold text-gray-500 uppercase flex items-center mb-1"><i data-lucide="shopping-bag" class="w-3 h-3 mr-1"></i> 購物</span> <ul class="text-xs text-gray-600 list-disc list-inside">${shopHTML}</ul> </div> </div> <div class="mt-3 bg-yellow-50 p-2 rounded text-xs text-yellow-800 flex items-start"> <i data-lucide="navigation" class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0"></i> ${zone.strategy} </div> </div> </div> `; grid.insertAdjacentHTML('beforeend', html); }); }
+        function renderStrategy() { const container = document.getElementById('strategy-timeline'); if(!container) return; STRATEGY.forEach((slot, index) => { const html = ` <div class="relative pl-8"> <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-sm"></div> <span class="text-sm font-bold text-indigo-500 mb-1 block">${slot.time}</span> <h4 class="text-lg font-bold text-gray-800">${slot.title}</h4> <p class="text-gray-600 text-sm mt-1">${slot.content}</p> </div> `; container.insertAdjacentHTML('beforeend', html); }); }
+        function renderFilters() { const container = document.getElementById('zone-filters'); if(!container) return; const zones = ['all', ...new Set(ALL_ATTRACTIONS.map(a => a.zone))]; zones.forEach(z => { const btn = document.createElement('button'); btn.className = `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 ${z === 'all' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-100'}`; btn.innerText = z === 'all' ? '全部顯示' : z; btn.onclick = () => { Array.from(container.children).forEach(c => { c.className = 'px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 bg-white text-gray-600 hover:bg-gray-100'; }); btn.className = 'px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border border-gray-200 bg-indigo-600 text-white shadow-md'; renderAttractions(z); }; container.appendChild(btn); }); }
+        function switchTab(tabId) { const guideContent = document.getElementById('tab-guide'); const gameContent = document.getElementById('tab-game'); const btnGuide = document.getElementById('btn-guide'); const btnGame = document.getElementById('btn-game'); if (tabId === 'guide') { guideContent.classList.remove('hidden'); gameContent.classList.add('hidden'); btnGuide.classList.replace('text-gray-500', 'text-indigo-600'); btnGuide.classList.replace('hover:text-gray-900', 'bg-indigo-50'); btnGame.classList.replace('text-yellow-600', 'text-gray-500'); btnGame.classList.replace('bg-yellow-50', 'hover:text-gray-900'); document.body.classList.remove('game-mode'); } else { guideContent.classList.add('hidden'); gameContent.classList.remove('hidden'); btnGuide.classList.replace('text-indigo-600', 'text-gray-500'); btnGuide.classList.replace('bg-indigo-50', 'hover:text-gray-900'); btnGame.classList.replace('text-gray-500', 'text-yellow-600'); btnGame.classList.replace('hover:text-gray-900', 'bg-yellow-50'); document.body.classList.add('game-mode'); } }
+        
+        // --- Modal Logic Updated ---
+        function openModal(url, title) { 
+            const modal = document.getElementById('info-modal'); 
+            const iframe = document.getElementById('modal-iframe'); 
+            const imgContainer = document.getElementById('modal-image-container');
+            const imgElement = document.getElementById('modal-image');
+            const titleEl = document.getElementById('modal-title'); 
+            const linkEl = document.getElementById('modal-new-window'); 
+            const content = document.getElementById('modal-content'); 
+            const loading = document.getElementById('modal-loading');
+
+            titleEl.innerText = title; 
+            const cleanUrl = url.replace('&output=embed', ''); 
+            linkEl.href = cleanUrl; 
+            modal.classList.remove('hidden'); 
+            loading.classList.remove('hidden'); // Show loading
+
+            // Check if URL is an image (simple check for extension)
+            const isImage = url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+
+            if (isImage) {
+                iframe.classList.add('hidden');
+                imgContainer.classList.remove('hidden');
+                
+                // Reset zoom state
+                imgElement.src = url;
+                imgElement.classList.remove('zoomed');
+                imgElement.style.transformOrigin = 'center center';
+                imgContainer.classList.remove('cursor-zoom-out');
+                imgContainer.classList.add('cursor-zoom-in');
+
+                imgElement.onload = () => {
+                    loading.classList.add('hidden');
+                };
+            } else {
+                imgContainer.classList.add('hidden');
+                iframe.classList.remove('hidden');
+                iframe.src = url;
+                iframe.onload = () => {
+                     loading.classList.add('hidden');
+                };
+            }
+
+            setTimeout(() => { 
+                content.classList.remove('scale-95'); 
+                content.classList.add('scale-100'); 
+            }, 10); 
+        }
+
+        function closeModal() { 
+            const modal = document.getElementById('info-modal'); 
+            const iframe = document.getElementById('modal-iframe'); 
+            const content = document.getElementById('modal-content'); 
+            content.classList.remove('scale-100'); 
+            content.classList.add('scale-95'); 
+            setTimeout(() => { 
+                modal.classList.add('hidden'); 
+                iframe.src = ''; 
+                document.getElementById('modal-image').src = '';
+            }, 200); 
+        }
+
+        // --- Image Zoom Logic ---
+        document.getElementById('modal-image').addEventListener('click', function(e) {
+            const container = document.getElementById('modal-image-container');
+            
+            if (this.classList.contains('zoomed')) {
+                // Zoom Out
+                this.classList.remove('zoomed');
+                container.classList.replace('cursor-zoom-out', 'cursor-zoom-in');
+                // Reset origin after transition to smooth out
+                setTimeout(() => {
+                     if(!this.classList.contains('zoomed')) this.style.transformOrigin = 'center center';
+                }, 300);
+            } else {
+                // Zoom In
+                const rect = this.getBoundingClientRect();
+                // Calculate click position relative to the image
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                this.style.transformOrigin = `${x}px ${y}px`;
+                this.classList.add('zoomed');
+                container.classList.replace('cursor-zoom-in', 'cursor-zoom-out');
+            }
+        });
+
+
+        // --- Game Logic ---
+        let gameAnimationFrame;
+        let isGameRunning = false;
+        let score = 0;
+        let speed = 5;
+        let lives = 3;
+        let gameTime = 60; 
+        let lastTime = 0;
+        let gameTimerInterval;
+        let currentMinionIndex = 0; 
+        let particles = []; 
+        let isEndSequence = false; // Flag for end animation
+
+        function startGame() {
+            // Audio Init
+            SoundManager.init();
+
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            isGameRunning = true;
+            isEndSequence = false;
+            score = 0;
+            speed = 5;
+            lives = 3;
+            gameTime = 60;
+            currentMinionIndex = 0;
+            particles = [];
+
+            document.getElementById('game-start-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('game-hud').classList.remove('hidden');
+            canvas.classList.add('playing');
+            updateHUD();
+
+            let playerX = canvas.width / 2;
+            const playerWidth = 40;
+            const playerHeight = 60;
+            let obstacles = [];
+
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            gameTimerInterval = setInterval(() => {
+                if (!isGameRunning || isEndSequence) return;
+                gameTime--;
+                updateHUD();
+                if (gameTime <= 0) {
+                    checkWinCondition();
+                }
+            }, 1000);
+
+            function updateHUD() {
+                document.getElementById('hud-score').innerText = score;
+                document.getElementById('hud-time').innerText = gameTime;
+                document.getElementById('hud-lives').innerText = '❤️'.repeat(lives);
+            }
+
+            function handleKeyDown(e) {
+                if (!isGameRunning || isEndSequence) return;
+                if (e.key === 'ArrowLeft') playerX -= 30;
+                if (e.key === 'ArrowRight') playerX += 30;
+                if (playerX < 0) playerX = 0;
+                if (playerX > canvas.width - playerWidth) playerX = canvas.width - playerWidth;
+            }
+            window.addEventListener('keydown', handleKeyDown);
+
+            // Draw Helpers (Minion, Banana, Sign, Mummy) - Same as previous, but included
+            function drawMinion(ctx, x, y, type) {
+                // Body
+                ctx.fillStyle = '#FACC15';
+                ctx.beginPath();
+                ctx.roundRect(x, y, playerWidth, playerHeight, 15);
+                ctx.fill();
+                ctx.strokeStyle = '#EAB308';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // Pants
+                ctx.fillStyle = '#1E40AF';
+                ctx.beginPath();
+                ctx.roundRect(x, y + playerHeight * 0.6, playerWidth, playerHeight * 0.4, [0,0,15,15]);
+                ctx.fill();
+                ctx.fillStyle = '#374151';
+                ctx.fillRect(x - 2, y + 15, playerWidth + 4, 6);
+                // Eyes
+                ctx.fillStyle = '#FFFFFF';
+                ctx.strokeStyle = '#9CA3AF';
+                ctx.lineWidth = 3;
+                if (type === 1) { 
+                    ctx.beginPath(); ctx.arc(x + playerWidth/2, y + 15, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#3E2723'; ctx.beginPath(); ctx.arc(x + playerWidth/2, y + 15, 4, 0, Math.PI*2); ctx.fill();
+                } else { 
+                    ctx.beginPath(); ctx.arc(x + playerWidth/2 - 8, y + 15, 8, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(x + playerWidth/2 + 8, y + 15, 8, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#3E2723';
+                    if (type === 2) ctx.fillStyle = '#4CAF50'; 
+                    ctx.beginPath(); ctx.arc(x + playerWidth/2 + 8, y + 15, 3, 0, Math.PI*2); ctx.fill();
+                    if (type === 2) ctx.fillStyle = '#3E2723'; 
+                    ctx.beginPath(); ctx.arc(x + playerWidth/2 - 8, y + 15, 3, 0, Math.PI*2); ctx.fill();
+                }
+            }
+
+            function drawBanana(ctx, x, y) {
+                ctx.save();
+                ctx.translate(x + 20, y + 20);
+                ctx.rotate(Math.PI / 4);
+                ctx.beginPath();
+                ctx.moveTo(-15, -5);
+                ctx.quadraticCurveTo(0, 10, 15, -5);
+                ctx.quadraticCurveTo(0, 20, -15, -5);
+                ctx.fillStyle = '#FACC15';
+                ctx.fill();
+                ctx.strokeStyle = '#EAB308';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = '#5D4037';
+                ctx.beginPath(); ctx.arc(-15, -5, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(15, -5, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+
+            function drawSign(ctx, x, y) {
+                const w = 40; const h = 40;
+                ctx.fillStyle = '#F59E0B';
+                ctx.beginPath();
+                ctx.moveTo(x + 5, y + h); ctx.lineTo(x + 10, y + 5); ctx.lineTo(x + 15, y + 5); ctx.lineTo(x + 10, y + h);
+                ctx.moveTo(x + w - 5, y + h); ctx.lineTo(x + w - 10, y + 5); ctx.lineTo(x + w - 15, y + 5); ctx.lineTo(x + w - 10, y + h);
+                ctx.fill();
+                ctx.fillStyle = '#F59E0B'; ctx.fillRect(x + 5, y + 10, w - 10, 10);
+                ctx.fillStyle = '#1F2937';
+                ctx.beginPath();
+                ctx.moveTo(x + 10, y + 10); ctx.lineTo(x + 15, y + 10); ctx.lineTo(x + 10, y + 20); ctx.lineTo(x + 5, y + 20);
+                ctx.moveTo(x + 20, y + 10); ctx.lineTo(x + 25, y + 10); ctx.lineTo(x + 20, y + 20); ctx.lineTo(x + 15, y + 20);
+                ctx.moveTo(x + 30, y + 10); ctx.lineTo(x + 35, y + 10); ctx.lineTo(x + 30, y + 20); ctx.lineTo(x + 25, y + 20);
+                ctx.fill();
+                ctx.fillStyle = '#F59E0B'; ctx.fillRect(x + 5, y + 25, w - 10, 10);
+                ctx.fillStyle = '#1F2937';
+                ctx.beginPath();
+                ctx.moveTo(x + 10, y + 25); ctx.lineTo(x + 15, y + 25); ctx.lineTo(x + 10, y + 35); ctx.lineTo(x + 5, y + 35);
+                ctx.moveTo(x + 20, y + 25); ctx.lineTo(x + 25, y + 25); ctx.lineTo(x + 20, y + 35); ctx.lineTo(x + 15, y + 35);
+                ctx.moveTo(x + 30, y + 25); ctx.lineTo(x + 35, y + 25); ctx.lineTo(x + 30, y + 35); ctx.lineTo(x + 25, y + 35);
+                ctx.fill();
+            }
+
+            function drawMummy(ctx, x, y) {
+                ctx.fillStyle = '#E5E7EB';
+                ctx.beginPath(); ctx.roundRect(x + 10, y + 5, 20, 35, 8); ctx.fill();
+                ctx.strokeStyle = '#9CA3AF'; ctx.lineWidth = 1.5;
+                for(let i=10; i<35; i+=5) { ctx.beginPath(); ctx.moveTo(x + 10, y + i); ctx.lineTo(x + 30, y + i + 2); ctx.stroke(); }
+                ctx.beginPath(); ctx.arc(x + 20, y + 12, 8, 0, Math.PI * 2); ctx.fillStyle = '#E5E7EB'; ctx.fill();
+                ctx.fillStyle = '#EF4444'; ctx.shadowBlur = 8; ctx.shadowColor = '#DC2626';
+                ctx.beginPath(); ctx.arc(x + 16, y + 12, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(x + 24, y + 12, 2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#E5E7EB'; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(x + 10, y + 20); ctx.lineTo(x + 5, y + 15); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x + 30, y + 20); ctx.lineTo(x + 35, y + 15); ctx.stroke();
+            }
+
+            // New Animation: Castle & Fireworks
+            function drawCastle(ctx) {
+                // Background sky
+                ctx.fillStyle = '#1e1b4b'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw Fireworks
+                particles.forEach((p, index) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.02;
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                    ctx.fillRect(p.x, p.y, 3, 3);
+                    if (p.alpha <= 0) particles.splice(index, 1);
+                });
+                
+                // Simple Castle Silhouette
+                ctx.fillStyle = '#1e3a8a'; // Dark Blue Castle
+                ctx.beginPath();
+                // Main tower
+                ctx.fillRect(canvas.width/2 - 40, canvas.height - 200, 80, 200);
+                // Side towers
+                ctx.fillRect(canvas.width/2 - 100, canvas.height - 120, 60, 120);
+                ctx.fillRect(canvas.width/2 + 40, canvas.height - 120, 60, 120);
+                // Roofs
+                ctx.fillStyle = '#60a5fa';
+                ctx.beginPath(); ctx.moveTo(canvas.width/2 - 45, canvas.height - 200); ctx.lineTo(canvas.width/2, canvas.height - 260); ctx.lineTo(canvas.width/2 + 45, canvas.height - 200); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(canvas.width/2 - 105, canvas.height - 120); ctx.lineTo(canvas.width/2 - 70, canvas.height - 160); ctx.lineTo(canvas.width/2 - 35, canvas.height - 120); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(canvas.width/2 + 35, canvas.height - 120); ctx.lineTo(canvas.width/2 + 70, canvas.height - 160); ctx.lineTo(canvas.width/2 + 105, canvas.height - 120); ctx.fill();
+                
+                // Door (Open)
+                ctx.fillStyle = '#fbbf24'; // Light inside
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, canvas.height, 30, Math.PI, 0);
+                ctx.fill();
+
+                // Minion entering (Back View)
+                const mx = canvas.width/2 - 20;
+                const my = canvas.height - 50;
+                ctx.fillStyle = '#FACC15'; 
+                ctx.beginPath(); ctx.roundRect(mx, my, 40, 50, 15); ctx.fill();
+                ctx.fillStyle = '#1E40AF'; 
+                ctx.beginPath(); ctx.roundRect(mx, my+30, 40, 20, [0,0,15,15]); ctx.fill();
+                
+                // Welcome Text
+                ctx.fillStyle = '#FFD700';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("Welcome to Universal Studios!", canvas.width/2, 100);
+            }
+
+            // New Animation: Sad Ending (Gated)
+            function drawSadEnding(ctx) {
+                // Background (Dark)
+                ctx.fillStyle = '#111827'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Gate (Bars)
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 10;
+                for(let i=0; i<canvas.width; i+=40) {
+                    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+                }
+                
+                // "CLOSED" Sign
+                ctx.fillStyle = '#991B1B';
+                ctx.fillRect(canvas.width/2 - 80, 100, 160, 60);
+                ctx.fillStyle = '#FEF2F2';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("CLOSED", canvas.width/2, 145);
+
+                // Sad Minion (Back View, Shaking)
+                const shake = Math.sin(Date.now() / 50) * 2; // Shivering
+                const mx = canvas.width/2 - 20;
+                const my = canvas.height - 120;
+                
+                ctx.save();
+                ctx.translate(shake, 0); // Apply shake
+
+                // Body
+                ctx.fillStyle = '#CA8A04'; // Darker yellow
+                ctx.beginPath(); ctx.roundRect(mx, my, 40, 60, 15); ctx.fill();
+                // Pants
+                ctx.fillStyle = '#1e3a8a';
+                ctx.beginPath(); ctx.roundRect(mx, my+35, 40, 25, [0,0,15,15]); ctx.fill();
+                // Strap (X shape on back)
+                ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(mx+5, my+35); ctx.lineTo(mx+35, my+15); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(mx+35, my+35); ctx.lineTo(mx+5, my+15); ctx.stroke();
+                
+                // Sad thought bubble?
+                ctx.fillStyle = '#FFF';
+                ctx.font = '30px Arial';
+                ctx.fillText("😢", mx + 50, my - 10);
+                
+                ctx.restore();
+                
+                // Falling leaves (sadness)
+                ctx.fillStyle = '#A16207';
+                for(let i=0; i<5; i++) {
+                    const lx = (Date.now()/20 + i*100) % canvas.width;
+                    const ly = (Date.now()/10 + i*50) % canvas.height;
+                    ctx.fillRect(lx, ly, 5, 5);
+                }
+            }
+
+            function loop(timestamp) {
+                if (!isGameRunning && !isEndSequence) return;
+                
+                if (isEndSequence) {
+                    // Just draw current end frame animation via requestAnimationFrame
+                    // logic handled inside playWinAnimation or playLoseAnimation loops
+                    return; 
+                }
+
+                // Clear
+                ctx.fillStyle = '#1e1b4b'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Road
+                ctx.strokeStyle = '#312e81';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([20, 20]);
+                ctx.lineDashOffset = -timestamp / 5;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width * 0.33, 0); ctx.lineTo(canvas.width * 0.33, canvas.height);
+                ctx.moveTo(canvas.width * 0.66, 0); ctx.lineTo(canvas.width * 0.66, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Spawn
+                if (timestamp - lastTime > 600) { 
+                    const typeR = Math.random();
+                    let type = 0; 
+                    if (typeR > 0.7) type = 1; 
+                    if (typeR > 0.9) type = 2; 
+                    const lane = Math.floor(Math.random() * 3); 
+                    const x = (lane * (canvas.width/3)) + (canvas.width/6) - 20; 
+                    obstacles.push({ x, y: -50, type, w: 40, h: 40 });
+                    lastTime = timestamp;
+                }
+
+                // Update Obstacles
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    const obs = obstacles[i];
+                    obs.y += speed + (score / 200); 
+
+                    if (obs.type === 0) drawBanana(ctx, obs.x, obs.y);
+                    else if (obs.type === 1) drawSign(ctx, obs.x, obs.y);
+                    else if (obs.type === 2) drawMummy(ctx, obs.x, obs.y);
+
+                    // Collision
+                    if (
+                        playerX < obs.x + obs.w &&
+                        playerX + playerWidth > obs.x &&
+                        canvas.height - 80 < obs.y + obs.h &&
+                        canvas.height - 80 + playerHeight > obs.y
+                    ) {
+                        if (obs.type === 0) { // Banana
+                            SoundManager.playCoin(); // SOUND
+                            score += 30; 
+                            updateHUD();
+                            obstacles.splice(i, 1);
+                        } else if (obs.type === 1) { // Sign
+                            SoundManager.playHit(); // SOUND
+                            score -= 10;
+                            if (score < 0) score = 0;
+                            updateHUD();
+                            obstacles.splice(i, 1);
+                            ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                            ctx.fillRect(0,0,canvas.width, canvas.height);
+                        } else if (obs.type === 2) { // Mummy
+                            SoundManager.playDie(); // SOUND
+                            lives--;
+                            currentMinionIndex = (currentMinionIndex + 1) % 3; 
+                            updateHUD();
+                            obstacles.splice(i, 1);
+                            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                            ctx.fillRect(0,0,canvas.width, canvas.height);
+                            if (lives <= 0) {
+                                endGame(false, "你被木乃伊抓走了！");
+                                return;
+                            }
+                        }
+                    }
+                    if (obs.y > canvas.height) obstacles.splice(i, 1);
+                }
+
+                drawMinion(ctx, playerX, canvas.height - 80, currentMinionIndex);
+                gameAnimationFrame = requestAnimationFrame(loop);
+            }
+
+            function checkWinCondition() {
+                if (score >= 1000) {
+                    endGame(true, "恭喜！任務達成！");
+                } else {
+                    endGame(false, "分數不足 1000 分...");
+                }
+            }
+
+            function endGame(win, msg) {
+                isGameRunning = false;
+                isEndSequence = true;
+                cancelAnimationFrame(gameAnimationFrame);
+                clearInterval(gameTimerInterval);
+                window.removeEventListener('keydown', handleKeyDown);
+                
+                const canvas = document.getElementById('gameCanvas');
+                canvas.classList.remove('playing'); // Restore cursor
+                const ctx = canvas.getContext('2d');
+
+                if (win) {
+                    SoundManager.playWin(); // SOUND
+                    function winLoop() {
+                        if (!isEndSequence) return; // Stop if restarted
+                        if (Math.random() > 0.9) {
+                            const x = Math.random() * canvas.width;
+                            const y = Math.random() * canvas.height/2;
+                            const color = `${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)}`;
+                            for(let i=0; i<20; i++) {
+                                particles.push({ x, y, vx: (Math.random()-0.5)*4, vy: (Math.random()-0.5)*4, alpha: 1, color });
+                            }
+                        }
+                        drawCastle(ctx);
+                        gameAnimationFrame = requestAnimationFrame(winLoop);
+                    }
+                    winLoop();
+                    setTimeout(() => showGameOverScreen(true, msg), 4000);
+                } else {
+                    SoundManager.playLose(); // SOUND
+                    function loseLoop() {
+                        if (!isEndSequence) return;
+                        drawSadEnding(ctx);
+                        gameAnimationFrame = requestAnimationFrame(loseLoop);
+                    }
+                    loseLoop();
+                    setTimeout(() => showGameOverScreen(false, msg), 3000);
+                }
+            }
+
+            function showGameOverScreen(win, msg) {
+                // Stop animation loops
+                isEndSequence = false; 
+                cancelAnimationFrame(gameAnimationFrame);
+
+                const title = document.getElementById('end-title');
+                const reason = document.getElementById('end-reason');
+                
+                if (win) {
+                    title.innerText = "MISSION ACCOMPLISHED";
+                    title.className = "text-3xl font-bold text-yellow-400 mb-2";
+                } else {
+                    title.innerText = "GAME OVER";
+                    title.className = "text-3xl font-bold text-red-500 mb-2";
+                }
+                
+                document.getElementById('final-score').innerText = score;
+                reason.innerText = msg;
+                
+                document.getElementById('game-over-screen').classList.remove('hidden');
+                document.getElementById('game-hud').classList.add('hidden');
+            }
+
+            gameAnimationFrame = requestAnimationFrame(loop);
+        }
+
+        // --- Minion Pet Logic (Same as before) ---
+        function initMinionPets() {
+            const minionCount = 3; 
+            const minions = [];
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            const types = ['kevin', 'stuart', 'bob'];
+
+            for(let i=0; i<minionCount; i++) {
+                const type = types[i % 3]; 
+                const el = document.createElement('div');
+                el.className = `minion-follower minion-${type}`;
+                
+                let eyesHtml = '';
+                if (type === 'kevin') {
+                    eyesHtml = `<div class="minion-hair"></div><div class="eye-left"><div class="pupil"></div></div><div class="eye-right"><div class="pupil"></div></div>`;
+                } else if (type === 'stuart') {
+                    eyesHtml = `<div class="minion-hair"></div><div class="eye-center"><div class="pupil"></div></div>`;
+                } else {
+                    eyesHtml = `<div class="eye-left"><div class="pupil-left"></div></div><div class="eye-right"><div class="pupil-right"></div></div>`;
+                }
+
+                el.innerHTML = `<div class="minion-strap"></div>${eyesHtml}<div class="minion-mouth"></div><div class="minion-pants"></div><div class="minion-pocket"></div><div class="minion-legs"><div class="minion-leg leg-left"></div><div class="minion-leg leg-right"></div></div>`;
+                document.body.appendChild(el);
+                
+                minions.push({ el, x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0, legAngle: 0 });
+            }
+
+            function updateMinions() {
+                let targetX = mouseX + 30; 
+                let targetY = mouseY + 30;
+
+                minions.forEach((minion, index) => {
+                    const ease = 0.035 - (index * 0.005); 
+                    const dx = targetX - minion.x;
+                    const dy = targetY - minion.y;
+                    minion.x += dx * ease;
+                    minion.y += dy * ease;
+                    const speed = Math.sqrt(dx*dx + dy*dy);
+                    const bounce = Math.abs(Math.sin(Date.now() / 150 + index * 1.5)) * Math.min(speed * 0.5, 12);
+                    let direction = 1;
+                    if (Math.abs(dx) > 1) { direction = dx > 0 ? 1 : -1; minion.lastDirection = direction; } else { direction = minion.lastDirection || 1; }
+                    const rotation = dx * 0.5;
+                    let yOffset = -25;
+                    let xOffset = -17;
+                    if(minion.el.classList.contains('minion-kevin')) { yOffset = -30; xOffset = -16; }
+                    else if(minion.el.classList.contains('minion-bob')) { yOffset = -21; xOffset = -19; }
+                    minion.el.style.transform = `translate(${minion.x + xOffset}px, ${minion.y + yOffset + -bounce}px) scaleX(${direction}) rotate(${rotation * 0.05}deg)`;
+                    const legLeft = minion.el.querySelector('.leg-left');
+                    const legRight = minion.el.querySelector('.leg-right');
+                    if (speed > 0.5) { 
+                        minion.legAngle += 0.8 + (speed * 0.1); 
+                        const legSwing = Math.sin(minion.legAngle) * 20; 
+                        legLeft.style.transform = `rotate(${-legSwing}deg)`;
+                        legRight.style.transform = `rotate(${legSwing}deg)`;
+                    } else {
+                        legLeft.style.transform = `rotate(0deg)`;
+                        legRight.style.transform = `rotate(0deg)`;
+                    }
+                    targetX = minion.x - (direction * 40); 
+                    targetY = minion.y;
+                });
+                requestAnimationFrame(updateMinions);
+            }
+            updateMinions();
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAttractions();
+            renderZones();
+            renderStrategy();
+            renderFilters();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            
+            // Scroll to top visibility logic
+            const backToTopBtn = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'translate-y-4');
+                    setTimeout(() => {
+                         if (window.scrollY <= 300) backToTopBtn.classList.add('hidden');
+                    }, 300);
+                }
+            });
+
+            // Start pets
+            initMinionPets();
+        });
+
+    </script>
+</body>
+</html>
